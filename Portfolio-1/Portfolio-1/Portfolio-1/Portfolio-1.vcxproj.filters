@@ -24,6 +24,9 @@
     <ClCompile Include="readpgmtest.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="Dd_robot.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Image.hpp">
@@ -33,6 +36,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="PPMLoader.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Dd_robot.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

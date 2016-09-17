@@ -146,11 +146,13 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="Dd_robot.cpp" />
     <ClCompile Include="Image.cpp" />
     <ClCompile Include="PPMLoader.cpp" />
     <ClCompile Include="readpgmtest.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Dd_robot.h" />
     <ClInclude Include="Image.hpp" />
     <ClInclude Include="macros.hpp" />
     <ClInclude Include="PPMLoader.hpp" />
