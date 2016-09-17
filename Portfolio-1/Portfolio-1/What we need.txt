@@ -1,0 +1,26 @@
+
+move(x1,x2,y1,y2,distance_x, distance_y)		This function takes the transformations and handles them relative to the robots position
+	This function should call other functions like:
+rotate(x1,x2,y1,y2)					Rotates the robot around it self, changing the parameter for the robots rotation
+translate(distance_x, distance_y)			Move the robot in x,y, should also check if a rotation is needed first. (cant move sideways)						
+	translate can use something like:
+slope(orientation)			tan(theta), tells us the slope, notice this should be in degrees.	
+	or
+slope((y2-y1)/(x2-x1)) 			Tells us the slope, 
+	to determine at what ratio we move in (x,y), if we want the robot to move in a direct manner, though it is not required for the assignment.
+
+Futhermore, the rotational speed and time of motion for each move() is to be computed.
+We decide how fast the robot moves, so this is essencially just making something like:
+rotationalSpeed(obj robot)		Essentially this could be a constant, thought we can implement differnt velocities for the robot.
+setSpeed(obj robot)			Changing speed settings.
+
+
+The robot should have a specific constructor with information like.
+	Start position - relative to the workspace frame  ____________ --> x
+	Orientation					 |
+							 |
+							 |	The img.pgm has a workspace looking like this.	
+							 |
+							 |
+							 v
+							 y						
