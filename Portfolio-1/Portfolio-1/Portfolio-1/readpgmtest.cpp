@@ -11,12 +11,23 @@ using namespace rw::loaders;
 int main()
 {
 	Dd_robot lort(1, 0, 0, 1, 0, 0);
-	
-	lort.move(cos(30*PI/180), sin(30*PI/180), 0-sin(30*PI/180), cos(30*PI/180), 10, 0);
 
-	lort.move(cos(60*PI/180), sin(60*PI/180), 0-sin(60*PI/180), cos(60*PI/180), 0, 10);
+	std::string filename("Bane1.pgm");
+	Image* img = PPMLoader::load(filename);
+
+	//lort.move(cos(30*PI/180), sin(30*PI/180), 0-sin(30*PI/180), cos(30*PI/180), 10, 0);
+
+	//lort.move(cos(60*PI/180), sin(60*PI/180), 0-sin(60*PI/180), cos(60*PI/180), 0, 10);
+
+	for (size_t i = 0; i < 20; i++)
+	{
+		//lort.move(cos(30 * PI / 180), sin(30 * PI / 180), 0 - sin(30 * PI / 180), cos(30 * PI / 180), 10, 0);
+		lort.move(1, 0, 0, 1, 5, 7);
+
+		lort.whereAreYou();
+	}
 	
-	lort.whereAreYou();
+	
 	
 	
 }
@@ -26,7 +37,7 @@ int main()
 
 //int main(int argc, char** argv) {
 //    //std::string filename(argv[1]);
-//	std::string filename("Bane1.pgm");
+//	  std::string filename("Bane1.pgm");
 //    std::cout << "loading image..." << std::endl;
 //    Image* img = PPMLoader::load(filename);
 //

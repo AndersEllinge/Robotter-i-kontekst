@@ -1,8 +1,13 @@
 #include "Dd_robot.h"
+#include "Image.hpp"
+#include "PPMLoader.hpp"
 #include <cmath>
 #include <iostream>
 
 #define PI 3.14159265
+
+using namespace rw::sensor;
+using namespace rw::loaders;
 
 Dd_robot::Dd_robot()
 {
@@ -30,10 +35,11 @@ void Dd_robot::move(double x1, double x2, double y1, double y2, int distance_x, 
 {
 	translate(distance_x, distance_y);
 
-	if (orientation_x1 == x1 && orientation_x2 == x2 && orientation_y1 == y1 && orientation_y2 == y2)
+	/*if (orientation_x1 == x1 && orientation_x2 == x2 && orientation_y1 == y1 && orientation_y2 == y2)
 	{
 		return;
-	}
+	}*/
+	
 	rotate(acos(x1), asin(x2), asin(y1), acos(y2));
 }
 
@@ -134,6 +140,16 @@ void Dd_robot::translate_x(int distance_x)
 		if (orientation_x1 == 1 && orientation_x2 == 0
 			&& orientation_y1 == 0 && orientation_y2 == 1)
 		{
+			for (size_t i = 0; i < distance_x; i++)
+			{
+				    
+				std::string filename("Bane1.pgm");
+				Image* img = PPMLoader::load(filename);
+
+				img->setPixel8U(position_x + i, position_y, 0);
+
+				img->saveAsPGM("Bane1.pgm");
+			}
 			position_x += distance_x;
 		}
 		else
@@ -148,7 +164,17 @@ void Dd_robot::translate_x(int distance_x)
 		if (orientation_x1 == -1 && orientation_x2 == 0
 			&& orientation_y1 == 0 && orientation_y2 == -1)
 		{
-			position_x -= distance_x;
+			
+			for (int i = 0; i > distance_x; i--)
+			{
+				std::string filename("Bane1.pgm");
+				Image* img = PPMLoader::load(filename);
+
+				img->setPixel8U(position_x + i, position_y, 0);
+
+				img->saveAsPGM("Bane1.pgm");
+			}
+			position_x += distance_x;
 		}
 		else
 		{
@@ -170,6 +196,16 @@ void Dd_robot::translate_y(int distance_y)
 		if (orientation_x1 == 0 && orientation_x2 == 1
 			&& orientation_y1 == -1 && orientation_y2 == 0)
 		{
+			for (size_t i = 0; i < distance_y; i++)
+			{
+
+				std::string filename("Bane1.pgm");
+				Image* img = PPMLoader::load(filename);
+
+				img->setPixel8U(position_x, position_y + i, 0);
+
+				img->saveAsPGM("Bane1.pgm");
+			}
 			position_y += distance_y;
 		}
 		else
@@ -184,6 +220,16 @@ void Dd_robot::translate_y(int distance_y)
 		if (orientation_x1 == 0 && orientation_x2 == -1
 			&& orientation_y1 == 1 && orientation_y2 == 0)
 		{
+			
+			for (int i = 0; i > distance_y; i--)
+			{
+				std::string filename("Bane1.pgm");
+				Image* img = PPMLoader::load(filename);
+
+				img->setPixel8U(position_x, position_y + i, 0);
+
+				img->saveAsPGM("Bane1.pgm");
+			}
 			position_y += distance_y;
 		}
 		else
