@@ -6,28 +6,36 @@ public:
 	Dd_robot(double or_x1, double or_x2, double or_y1, double or_y2, int pos_x, int pos_y);
 	~Dd_robot();
 
+	void matrixMulti(double a1, double a2, double b1, double b2, double c1, double c2);
 	void move(double x1, double x2, double y1, double y2, int distance_x, int distance_y);
 	void whereAreYou();
-	void rotate(double x1, double x2, double y1, double y2);
-	void globalRotate(double x1, double x2, double y1, double y2);
-	void setPreviousRotation();
-	void translate(int distance_x, int distance_y);
-	void translate_x(int distance_x);
-	void translate_y(int distance_y);
+	void globalRotate(double x1, double x2, double y1, double y2, double curr1, double curr2);
+	void globalRotateEnd(double x1, double x2, double y1, double y2);
+	void saveCurrentTransformation();
+	void translate();
+	void translate_x();
+	void translate_y();
+	bool testWorkSpace(int distance_x, int distance_y);
+	void setRobotVelocity(int newVelocityLeft, int newVelocityRight);
+	double angleBetweenVectors(double x1, double x2, double y1, double y2);
+	void findMinWorkSpace();
+	void lineFunction(double x0, double y0, double x1, double y1);
+	double calcRotationTime(double radians);
+	void printRotationalSpeed();
+	void drawPoint(int x, int y, int colour);
+
+
 protected:
 	
-	double orientation_x1;
-	double orientation_x2;
-	double orientation_y1;
-	double orientation_y2;
-
-	double prev_orientation_x1;
-	double prev_orientation_x2;
-	double prev_orientation_y1;
-	double prev_orientation_y2;
-
-	int position_x;
-	int position_y;
+	double robotOrientation;
+	double wheelRadius;
+	double distanceBetweenWheels;
+	double velocity_left;
+	double velocity_right;
+	double circumference;
+	double time_in_motion;
+	double new_arr[3][3];
+	double curr_arr[3][3];
 
 };
 
