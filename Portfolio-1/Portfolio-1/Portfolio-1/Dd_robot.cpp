@@ -122,13 +122,11 @@ void Dd_robot::move(double x1, double x2, double y1, double y2, int distance_x, 
 
 	saveCurrentTransformation();
 	matrixMulti(x1, x2, y1, y2, distance_x, distance_y);
-	//getRotationalSpeed();
+	
 	if (testWorkSpace(new_arr[0][2],new_arr[1][2]))
 	{
 		translate();
-		std::cout << "Rotating to given end orientation " << std::endl;
-		
-		globalRotateEnd(new_arr[0][0], new_arr[1][0], new_arr[0][1], new_arr[1][1]);
+		globalRotate(new_arr[0][0], new_arr[1][0], new_arr[0][1], new_arr[1][1]);
 	}
 	std::cout << "The whole motion took: " << time_in_motion << " seconds." << std::endl;
 	std::cout << std::endl;
@@ -151,31 +149,7 @@ void Dd_robot::whereAreYou()
 	std::cout << std::endl;
 }
 
-void Dd_robot::globalRotate(double x1, double x2, double y1, double y2, double curr1, double curr2)
-{
-	double dotProduct = -curr_arr[0][0] * x2 + x1 * curr_arr[1][0];
-	if (dotProduct > 0)
-	{
-		setRobotVelocity(abs(getRobotVelocityL()), -abs(getRobotVelocityR()));	//right turn
-	}
-	else if (dotProduct < 0)
-	{
-		setRobotVelocity(-abs(getRobotVelocityL()), abs(getRobotVelocityL()));	//left turn
-	}
-	printRotationalSpeed();
-
-	std::cout << "Spent " << 
-			calcRotationTime(angleBetweenVectors(curr_arr[0][0], curr_arr[1][0], x1, x2)) 
-			<< " seconds rotating" << std::endl;
-	time_in_motion += calcRotationTime(angleBetweenVectors(curr_arr[0][0], curr_arr[1][0], x1, x2));
-	
-	curr_arr[0][0] = x1;
-	curr_arr[1][0] = x2;
-	curr_arr[0][1] = y1;
-	curr_arr[1][1] = y2;
-}
-
-void Dd_robot::globalRotateEnd(double x1, double x2, double y1, double y2)
+void Dd_robot::globalRotate(double x1, double x2, double y1, double y2)
 {
 	if (x1 == curr_arr[0][0] && x2 == curr_arr[1][0])
 	{
@@ -192,14 +166,15 @@ void Dd_robot::globalRotateEnd(double x1, double x2, double y1, double y2)
 	}
 	else if (dotProduct < 0)
 	{
-		setRobotVelocity(-abs(getRobotVelocityL()), abs(getRobotVelocityR()));	//left turn
+		setRobotVelocity(-abs(getRobotVelocityL()), abs(getRobotVelocityL()));	//left turn
 	}
 	printRotationalSpeed();
-	std::cout << "Spent " <<
-		calcRotationTime(angleBetweenVectors(curr_arr[0][0], curr_arr[1][0], x1, x2))
-		<< " seconds rotating" << std::endl;
-	time_in_motion += calcRotationTime(angleBetweenVectors(curr_arr[0][0], curr_arr[1][0], x1, x2));
 
+	std::cout << "Spent " << 
+			calcRotationTime(angleBetweenVectors(curr_arr[0][0], curr_arr[1][0], x1, x2)) 
+			<< " seconds rotating" << std::endl;
+	time_in_motion += calcRotationTime(angleBetweenVectors(curr_arr[0][0], curr_arr[1][0], x1, x2));
+	
 	curr_arr[0][0] = x1;
 	curr_arr[1][0] = x2;
 	curr_arr[0][1] = y1;
@@ -237,7 +212,7 @@ void Dd_robot::translate_x()
 		if (curr_arr[0][0] == 1 && curr_arr[1][0] == 0
 			&& curr_arr[0][1] == 0 && curr_arr[1][1] == 1)
 		{
-			setRobotVelocity(getRobotVelocityL(), getRobotVelocityR());
+			setRobotVelocity(abs(getRobotVelocityL()), abs(getRobotVelocityR()));
 			printRotationalSpeed();
 			std::cout << "Moving towards pixel " << "(" <<new_arr[0][2] << ", " << curr_arr[1][2] << ") along x-axis" << std::endl;
 			time_in_motion += (distance_x - position_x) / velocity_left;
@@ -247,7 +222,7 @@ void Dd_robot::translate_x()
 		{
 			std::cout << "Rotating towards postive x-axis to move along it " << std::endl;
 			
-			globalRotate(1, 0, 0, 1, curr_arr[0][0], curr_arr[1][0]);
+			globalRotate(1, 0, 0, 1);
 			translate_x();
 		}
 	}
@@ -257,7 +232,7 @@ void Dd_robot::translate_x()
 		if (curr_arr[0][0] == -1 && curr_arr[1][0] == 0
 			&& curr_arr[0][1] == 0 && curr_arr[1][1] == -1)
 		{
-			setRobotVelocity(getRobotVelocityL(), getRobotVelocityR());
+			setRobotVelocity(abs(getRobotVelocityL()), abs(getRobotVelocityR()));
 			printRotationalSpeed();
 			std::cout << "Moving towards pixel " << "(" << new_arr[0][2] << ", " << curr_arr[1][2] << ") along x-axis" << std::endl;
 			time_in_motion += (position_x - distance_x) / velocity_left;
@@ -267,7 +242,7 @@ void Dd_robot::translate_x()
 		{
 			std::cout << "Rotating towards negative x-axis to move along it " << std::endl;
 			
-			globalRotate(-1, 0, 0, -1, curr_arr[0][0], curr_arr[1][0]);
+			globalRotate(-1, 0, 0, -1);
 			translate_x();
 		}
 	}
@@ -295,7 +270,8 @@ void Dd_robot::translate_y()
 		else
 		{
 			std::cout << "Rotating towards postive y-axis to move along it " << std::endl;
-			globalRotate(0, 1, -1, 0, curr_arr[0][0], curr_arr[1][0]);
+
+			globalRotate(0, 1, -1, 0);
 			translate_y();
 		}
 	}
@@ -313,7 +289,8 @@ void Dd_robot::translate_y()
 		else
 		{
 			std::cout << "Rotating towards negative y-axis to move along it " << std::endl;
-			globalRotate(0, -1, 1, 0, curr_arr[0][0], curr_arr[1][0]);
+			
+			globalRotate(0, -1, 1, 0);
 			translate_y();
 		}
 	}
@@ -400,8 +377,6 @@ int Dd_robot::getRobotVelocityR()
 {
 	return velocity_right;
 }
-
-
 
 double Dd_robot::angleBetweenVectors(double x1, double x2,double y1, double y2)
 {

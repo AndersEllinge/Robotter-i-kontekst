@@ -9,8 +9,7 @@ public:
 	void matrixMulti(double a1, double a2, double b1, double b2, double c1, double c2);
 	void move(double x1, double x2, double y1, double y2, int distance_x, int distance_y);
 	void whereAreYou();
-	void globalRotate(double x1, double x2, double y1, double y2, double curr1, double curr2);
-	void globalRotateEnd(double x1, double x2, double y1, double y2);
+	void globalRotate(double x1, double x2, double y1, double y2);
 	void saveCurrentTransformation();
 	void translate();
 	void translate_x();
