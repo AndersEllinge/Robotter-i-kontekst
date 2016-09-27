@@ -35,11 +35,11 @@ Dd_robot::Dd_robot(double or_x1, double or_x2, double or_y1, double or_y2, int p
 	new_arr[2][1] = 0;
 	new_arr[2][2] = 1;
 
-	robotOrientation = 0;  // thetha for the robot to the work space
+	//robotOrientation = 0;  // thetha for the robot to the work space
 
 	time_in_motion = 0;
-	velocity_left = 0;			// pixels pr. sec
-	velocity_right = 0;
+	velocity_left = 4;			// pixels pr. sec
+	velocity_right = 4;
 	wheelRadius = 0.1;		// units in pixels
 	distanceBetweenWheels = 0.4; 
 	circumference = PI * distanceBetweenWheels; // units in pixels
@@ -156,11 +156,11 @@ void Dd_robot::globalRotate(double x1, double x2, double y1, double y2, double c
 	double dotProduct = -curr_arr[0][0] * x2 + x1 * curr_arr[1][0];
 	if (dotProduct > 0)
 	{
-		setRobotVelocity(2, -2);	//right turn
+		setRobotVelocity(abs(getRobotVelocityL()), -abs(getRobotVelocityR()));	//right turn
 	}
 	else if (dotProduct < 0)
 	{
-		setRobotVelocity(-2, 2);	//left turn
+		setRobotVelocity(-abs(getRobotVelocityL()), abs(getRobotVelocityL()));	//left turn
 	}
 	printRotationalSpeed();
 
@@ -188,11 +188,11 @@ void Dd_robot::globalRotateEnd(double x1, double x2, double y1, double y2)
 	double dotProduct = -curr_arr[0][0] * x2 + x1 * curr_arr[1][0];
 	if (dotProduct > 0)
 	{
-		setRobotVelocity(2, -2);	//right turn
+		setRobotVelocity(abs(getRobotVelocityL()), -abs(getRobotVelocityR()));	//right turn
 	}
 	else if (dotProduct < 0)
 	{
-		setRobotVelocity(-2, 2);	//left turn
+		setRobotVelocity(-abs(getRobotVelocityL()), abs(getRobotVelocityR()));	//left turn
 	}
 	printRotationalSpeed();
 	std::cout << "Spent " <<
@@ -237,7 +237,7 @@ void Dd_robot::translate_x()
 		if (curr_arr[0][0] == 1 && curr_arr[1][0] == 0
 			&& curr_arr[0][1] == 0 && curr_arr[1][1] == 1)
 		{
-			setRobotVelocity(2, 2);
+			setRobotVelocity(getRobotVelocityL(), getRobotVelocityR());
 			printRotationalSpeed();
 			std::cout << "Moving towards pixel " << "(" <<new_arr[0][2] << ", " << curr_arr[1][2] << ") along x-axis" << std::endl;
 			time_in_motion += (distance_x - position_x) / velocity_left;
@@ -257,7 +257,7 @@ void Dd_robot::translate_x()
 		if (curr_arr[0][0] == -1 && curr_arr[1][0] == 0
 			&& curr_arr[0][1] == 0 && curr_arr[1][1] == -1)
 		{
-			setRobotVelocity(2, 2);
+			setRobotVelocity(getRobotVelocityL(), getRobotVelocityR());
 			printRotationalSpeed();
 			std::cout << "Moving towards pixel " << "(" << new_arr[0][2] << ", " << curr_arr[1][2] << ") along x-axis" << std::endl;
 			time_in_motion += (position_x - distance_x) / velocity_left;
@@ -286,7 +286,7 @@ void Dd_robot::translate_y()
 		if (curr_arr[0][0] == 0 && curr_arr[1][0] == 1
 			&& curr_arr[0][1] == -1 && curr_arr[1][1] == 0)
 		{
-			setRobotVelocity(2, 2);
+			setRobotVelocity(abs(getRobotVelocityL()), abs(getRobotVelocityR()));
 			printRotationalSpeed();
 			std::cout << "Moving towards pixel " << "(" << new_arr[0][2] << ", " << new_arr[1][2] << ") along y-axis" << std::endl;
 			time_in_motion += (distance_y - position_y) / velocity_left;
@@ -304,7 +304,7 @@ void Dd_robot::translate_y()
 		if (curr_arr[0][0] == 0 && curr_arr[1][0] == -1
 			&& curr_arr[0][1] == 1 && curr_arr[1][1] == 0)
 		{
-			setRobotVelocity(2, 2);
+			setRobotVelocity(abs(getRobotVelocityL()), abs(getRobotVelocityL()));
 			printRotationalSpeed();
 			std::cout << "Moving towards pixel " << "(" << new_arr[0][2] << ", " << new_arr[1][2] << ") along y-axis" << std::endl;
 			time_in_motion += (position_y - distance_y) / velocity_left;
@@ -390,6 +390,18 @@ void Dd_robot::setRobotVelocity(int newVelocityLeft, int newVelocityRight)
 	velocity_left = newVelocityLeft;
 	velocity_right = newVelocityRight;
 }
+
+int Dd_robot::getRobotVelocityL()
+{
+	return velocity_left;
+}
+
+int Dd_robot::getRobotVelocityR()
+{
+	return velocity_right;
+}
+
+
 
 double Dd_robot::angleBetweenVectors(double x1, double x2,double y1, double y2)
 {
