@@ -16,8 +16,8 @@ public:
 	void translate_y();
 	bool testWorkSpace(int distance_x, int distance_y);
 	void setRobotVelocity(int newVelocityLeft, int newVelocityRight);
-	int getRobotVelocityL();
-	int getRobotVelocityR();
+	double getRobotVelocityL();
+	double getRobotVelocityR();
 	double angleBetweenVectors(double x1, double x2, double y1, double y2);
 	void findMinWorkSpace();
 	void lineFunction(double x0, double y0, double x1, double y1);

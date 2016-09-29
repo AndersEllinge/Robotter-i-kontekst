@@ -38,8 +38,8 @@ Dd_robot::Dd_robot(double or_x1, double or_x2, double or_y1, double or_y2, int p
 	//robotOrientation = 0;  // thetha for the robot to the work space
 
 	time_in_motion = 0;
-	velocity_left = 4;			// pixels pr. sec
-	velocity_right = 4;
+	velocity_left = 10;			// radians pr. sec
+	velocity_right = 10;
 	wheelRadius = 0.1;		// units in pixels
 	distanceBetweenWheels = 0.4; 
 	circumference = PI * distanceBetweenWheels; // units in pixels
@@ -215,7 +215,9 @@ void Dd_robot::translate_x()
 			setRobotVelocity(abs(getRobotVelocityL()), abs(getRobotVelocityR()));
 			printRotationalSpeed();
 			std::cout << "Moving towards pixel " << "(" <<new_arr[0][2] << ", " << curr_arr[1][2] << ") along x-axis" << std::endl;
-			time_in_motion += (distance_x - position_x) / velocity_left;
+			std::cout << "Movement took: " << abs((distance_x - position_x) / (velocity_left*wheelRadius)) << 
+				" seconds."<<std::endl;
+			time_in_motion += (distance_x - position_x) / (velocity_left*wheelRadius);
 			lineFunction(curr_arr[0][2], curr_arr[1][2], new_arr[0][2], curr_arr[1][2]);
 		}
 		else
@@ -235,7 +237,9 @@ void Dd_robot::translate_x()
 			setRobotVelocity(abs(getRobotVelocityL()), abs(getRobotVelocityR()));
 			printRotationalSpeed();
 			std::cout << "Moving towards pixel " << "(" << new_arr[0][2] << ", " << curr_arr[1][2] << ") along x-axis" << std::endl;
-			time_in_motion += (position_x - distance_x) / velocity_left;
+			std::cout << "Movement took: " << abs((distance_x - position_x) / (velocity_left*wheelRadius)) <<
+				" seconds." << std::endl;
+			time_in_motion += (position_x - distance_x) / (velocity_left*wheelRadius);
 			lineFunction(curr_arr[0][2], curr_arr[1][2], new_arr[0][2], curr_arr[1][2]);
 		}
 		else
@@ -264,7 +268,9 @@ void Dd_robot::translate_y()
 			setRobotVelocity(abs(getRobotVelocityL()), abs(getRobotVelocityR()));
 			printRotationalSpeed();
 			std::cout << "Moving towards pixel " << "(" << new_arr[0][2] << ", " << new_arr[1][2] << ") along y-axis" << std::endl;
-			time_in_motion += (distance_y - position_y) / velocity_left;
+			std::cout << "Movement took: " << abs((distance_y - position_y) / (velocity_left*wheelRadius)) <<
+				" seconds." << std::endl;
+			time_in_motion += (distance_y - position_y) / (velocity_left*wheelRadius);
 			lineFunction(new_arr[0][2], curr_arr[1][2], new_arr[0][2], new_arr[1][2]);
 		}
 		else
@@ -283,7 +289,9 @@ void Dd_robot::translate_y()
 			setRobotVelocity(abs(getRobotVelocityL()), abs(getRobotVelocityL()));
 			printRotationalSpeed();
 			std::cout << "Moving towards pixel " << "(" << new_arr[0][2] << ", " << new_arr[1][2] << ") along y-axis" << std::endl;
-			time_in_motion += (position_y - distance_y) / velocity_left;
+			std::cout << "Movement took: " << abs((distance_y - position_y) / (velocity_left*wheelRadius)) <<
+				" seconds." << std::endl;
+			time_in_motion += (position_y - distance_y) / (velocity_left*wheelRadius);
 			lineFunction(new_arr[0][2], curr_arr[1][2], new_arr[0][2], new_arr[1][2]);
 		}
 		else
@@ -368,12 +376,12 @@ void Dd_robot::setRobotVelocity(int newVelocityLeft, int newVelocityRight)
 	velocity_right = newVelocityRight;
 }
 
-int Dd_robot::getRobotVelocityL()
+double Dd_robot::getRobotVelocityL()
 {
 	return velocity_left;
 }
 
-int Dd_robot::getRobotVelocityR()
+double Dd_robot::getRobotVelocityR()
 {
 	return velocity_right;
 }
@@ -471,14 +479,14 @@ void Dd_robot::lineFunction(double x0, double y0, double x1, double y1) // this 
 double Dd_robot::calcRotationTime(double radians)
 {
 	double timeSpent = 0;
-	timeSpent = (radians * circumference) / (2 * PI*abs(velocity_left)*wheelRadius);
+	timeSpent = (radians * circumference) / (2 * PI*abs(velocity_left) * wheelRadius);
 	return timeSpent;
 }
 
 void Dd_robot::printRotationalSpeed()
 {
-	std::cout << "Rotational speed for the left wheel is currently: " << velocity_left / wheelRadius << std::endl;
-	std::cout << "Rotational speed for the right wheel is currently: " << velocity_right / wheelRadius << std::endl;
+	std::cout << "Rotational speed for the left wheel is currently: " << velocity_left << std::endl;
+	std::cout << "Rotational speed for the right wheel is currently: " << velocity_right << std::endl;
 }
 
 void Dd_robot::drawPoint(int x, int y, int colour)
