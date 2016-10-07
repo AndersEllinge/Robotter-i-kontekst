@@ -7,6 +7,8 @@ int main() {
 
 	std::cout << "Homo" << std::endl;
 
+	std::cout << "Diller" << std::endl;
+
 	MyMap map;
 
 	return 1;
