@@ -8,6 +8,8 @@ int main() {
 	std::cout << "Homo" << std::endl;
 
 	std::cout << "SvampeDiller" << std::endl;
+	
+	std::cout << "Gay" << std::endl;
 
 	MyMap map;
 
