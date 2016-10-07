@@ -9,6 +9,7 @@ int main() {
 	MyMap map(img);
 
 	map.createBrushfire();
+	map.createGVD();
 
 	return 1;
 }

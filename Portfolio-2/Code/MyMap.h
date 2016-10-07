@@ -19,9 +19,11 @@ public:
 private:
 	Image* map;
 	Image* brushfireMap;
-	Image* GvdMap;
+	Image* gvdMap;
 
 	bool isNextTo4Way(Image* map, int posX, int posY, int target);
+	bool isPartOfGVD(Image* map, int posX, int posY);
+
 
 };
 
