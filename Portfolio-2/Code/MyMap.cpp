@@ -82,7 +82,8 @@ bool MyMap::isNextTo4Way(Image* map, int posX, int posY, int target)
 
 bool MyMap::isPartOfGVD(Image * map, int posX, int posY)
 {
-	int sum = 0;
+	int sum1 = 0;
+	int sum2 = 0;
 
 	// Test if on obstacle
 	if (map->getPixelValuei(posX, posY, 0) == 0)
@@ -100,23 +101,23 @@ bool MyMap::isPartOfGVD(Image * map, int posX, int posY)
 	// Test for sides
 	if (map->getPixelValuei(posX + 1, posY, 0) <= map->getPixelValuei(posX, posY, 0))
 		if (map->getPixelValuei(posX - 1, posY, 0) <= map->getPixelValuei(posX, posY, 0))
-			sum++;
+			sum1++;
 
 	// Test for top and bottom
 	if (map->getPixelValuei(posX, posY + 1, 0) <= map->getPixelValuei(posX, posY, 0))
 		if (map->getPixelValuei(posX, posY - 1, 0) <= map->getPixelValuei(posX, posY, 0))
-			sum++;
+			sum1++;
 
 	if (map->getPixelValuei(posX - 1, posY + 1, 0) <= map->getPixelValuei(posX, posY, 0))
 		if (map->getPixelValuei(posX + 1, posY - 1, 0) <= map->getPixelValuei(posX, posY, 0))
-			sum++;
+			sum2++;
 
 	if (map->getPixelValuei(posX + 1, posY + 1, 0) <= map->getPixelValuei(posX, posY, 0))
 		if (map->getPixelValuei(posX - 1, posY - 1, 0) <= map->getPixelValuei(posX, posY, 0))
-			sum++;
+			sum2++;
 
 
-	if (sum > 1)
+	if (sum1 > 1 || sum2 > 1)
 		return 1;
 
 	return 0;
