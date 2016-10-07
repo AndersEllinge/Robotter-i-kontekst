@@ -8,7 +8,7 @@ int main() {
 
 	MyMap map(img);
 
-	map.brushfire();
+	map.createBrushfire();
 
 	return 1;
 }

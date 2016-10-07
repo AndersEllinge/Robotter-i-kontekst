@@ -9,6 +9,8 @@ MyMap::MyMap()
 MyMap::MyMap(Image * inputMap)
 {
 	map = inputMap;
+	brushfireMap = nullptr;
+	GvdMap = nullptr;
 }
 
 
@@ -16,28 +18,32 @@ MyMap::~MyMap()
 {
 }
 
-void MyMap::brushfire()
+void MyMap::createBrushfire()
 {
+	brushfireMap = map->copyFlip(0,0);
 
 	for (int range = 0; range < 255; range++) { // Runs through every possible brushfire value
-		for (int width = 0; width < map->getWidth(); width++) { // Runs through all widths
-			for (int height = 0; height < map->getHeight(); height++) { // Runs through all heights for specific width 
+		for (int width = 0; width < brushfireMap->getWidth(); width++) { // Runs through all widths
+			for (int height = 0; height < brushfireMap->getHeight(); height++) { // Runs through all heights for specific width 
 				
-				if (map->getPixelValuei(width, height, 0) == 255) { // test for blank space
-					if (isNextTo4Way(width, height, range) == 1) { // Test for change of space
-						map->setPixel8U(width, height, range + 1); // Set blank space to new value
+				if (brushfireMap->getPixelValuei(width, height, 0) == 255) { // test for blank space
+					if (isNextTo4Way(brushfireMap, width, height, range) == 1) { // Test for change of space
+						brushfireMap->setPixel8U( width, height, range + 1); // Set blank space to new value
 					}
 				}
-
 			}
 		}
 	}
 
-	map->saveAsPGM("brushfire.pgm");
+	brushfireMap->saveAsPGM("brushfire.pgm");
+}
+
+void MyMap::createGVD()
+{
 
 }
 
-bool MyMap::isNextTo4Way(int posX, int posY, int target)
+bool MyMap::isNextTo4Way(Image* map, int posX, int posY, int target)
 {
 
 	if (posX != 0) // Test for border
