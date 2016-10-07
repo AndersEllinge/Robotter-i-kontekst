@@ -3,7 +3,7 @@
 
 int main() {
 
-	std::cout << "Hej" << std::endl;
+	std::cout << "Anders er" << std::endl;
 
 	std::cout << "Homo" << std::endl;
 
