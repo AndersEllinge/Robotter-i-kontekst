@@ -131,21 +131,40 @@ bool MyMap::isPartOfGVD(Image * map, int posX, int posY)
 	}
 
 
-
-	if (map->getPixelValuei(posX - 1, posY + 1, 0) < map->getPixelValuei(posX, posY, 0))
+	// Test for one slash
+	if (map->getPixelValuei(posX - 1, posY + 1, 0) < map->getPixelValuei(posX, posY, 0)) {
+		if (map->getPixelValuei(posX + 1, posY - 1, 0) == map->getPixelValuei(posX, posY, 0))
+			if (map->getPixelValuei(posX + 2, posY - 2, 0) < map->getPixelValuei(posX, posY, 0))
+				return 1;
 		if (map->getPixelValuei(posX + 1, posY - 1, 0) <= map->getPixelValuei(posX, posY, 0))
-			if (map->getPixelValuei(posX + 1, posY - 1, 0) < map->getPixelValuei(posX, posY, 0))
-				if (map->getPixelValuei(posX - 1, posY + 1, 0) <= map->getPixelValuei(posX, posY, 0))
-					return 1;
+			return 1;
+	}		
+
+	if (map->getPixelValuei(posX + 1, posY - 1, 0) < map->getPixelValuei(posX, posY, 0)) {
+		if (map->getPixelValuei(posX - 1, posY + 1, 0) == map->getPixelValuei(posX, posY, 0))
+			if (map->getPixelValuei(posX - 2, posY + 2, 0) == map->getPixelValuei(posX, posY, 0))
+				return 1;
+		if (map->getPixelValuei(posX - 1, posY + 1, 0) < map->getPixelValuei(posX, posY, 0))
+			return 1;
+	}
 
 
-
-
-	if (map->getPixelValuei(posX + 1, posY + 1, 0) < map->getPixelValuei(posX, posY, 0))
-		if (map->getPixelValuei(posX - 1, posY - 1, 0) <= map->getPixelValuei(posX, posY, 0))
-			if (map->getPixelValuei(posX - 1, posY - 1, 0) < map->getPixelValuei(posX, posY, 0))
-				if (map->getPixelValuei(posX + 1, posY + 1, 0) <= map->getPixelValuei(posX, posY, 0))
-					return 1;
+	// Test for other slash
+	if (map->getPixelValuei(posX + 1, posY + 1, 0) < map->getPixelValuei(posX, posY, 0)) {
+		if (map->getPixelValuei(posX - 1, posY - 1, 0) == map->getPixelValuei(posX, posY, 0))
+			if (map->getPixelValuei(posX - 2, posY - 2, 0) < map->getPixelValuei(posX, posY, 0))
+				return 1;
+		if (map->getPixelValuei(posX - 1, posY - 1, 0) < map->getPixelValuei(posX, posY, 0))
+			return 1;
+	}
+		
+	if (map->getPixelValuei(posX - 1, posY - 1, 0) < map->getPixelValuei(posX, posY, 0)) {
+		if (map->getPixelValuei(posX + 1, posY + 1, 0) == map->getPixelValuei(posX, posY, 0))
+			if (map->getPixelValuei(posX + 2, posY + 2, 0) < map->getPixelValuei(posX, posY, 0))
+				return 1;
+		if (map->getPixelValuei(posX + 1, posY + 1, 0) < map->getPixelValuei(posX, posY, 0))
+			return 1;
+	}
 
 	return 0;
 }
