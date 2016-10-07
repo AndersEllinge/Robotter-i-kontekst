@@ -9,7 +9,7 @@ int main() {
 
 	std::cout << "SvampeDiller" << std::endl;
 	
-	std::cout << "Homie" << std::endl;
+	std::cout << "Homie og StjernePik" << std::endl;
 
 	MyMap map;
 
