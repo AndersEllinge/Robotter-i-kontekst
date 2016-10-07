@@ -1,17 +1,14 @@
 #include <iostream>
+#include "Image.hpp"
 #include "MyMap.h"
 
 int main() {
 
-	std::cout << "Anders er" << std::endl;
+	Image* img = PPMLoader::load("map.pgm");
 
-	std::cout << "Homo" << std::endl;
+	MyMap map(img);
 
-	std::cout << "SvampeDiller" << std::endl;
-	
-	std::cout << "Homie og StjernePik" << std::endl;
-
-	MyMap map;
+	map.brushfire();
 
 	return 1;
 }
