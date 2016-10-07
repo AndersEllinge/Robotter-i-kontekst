@@ -120,7 +120,7 @@ void Dd_robot::move(double x1, double x2, double y1, double y2, int distance_x, 
 	std::cout << std::endl;
 	std::cout << "Reading new transformation ..." << '\n'<< std::endl;
 
-	//saveCurrentTransformation();
+	saveCurrentTransformation();
 	matrixMulti(x1, x2, y1, y2, distance_x, distance_y);
 	
 	if (testWorkSpace(new_arr[0][2],new_arr[1][2]))
