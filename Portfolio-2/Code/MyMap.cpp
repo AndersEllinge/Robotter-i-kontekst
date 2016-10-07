@@ -82,6 +82,9 @@ bool MyMap::isNextTo4Way(Image* map, int posX, int posY, int target)
 
 bool MyMap::isPartOfGVD(Image * map, int posX, int posY)
 {
+	bool tempx = 0;
+	bool tempy = 0;
+
 	// Test if on obstacle
 	if (map->getPixelValuei(posX, posY, 0) == 0)
 		return 0;
@@ -90,13 +93,16 @@ bool MyMap::isPartOfGVD(Image * map, int posX, int posY)
 	if (posX != 0 && posX != map->getWidth() - 1)
 		if (map->getPixelValuei(posX + 1, posY, 0) <= map->getPixelValuei(posX, posY, 0))
 			if (map->getPixelValuei(posX - 1, posY, 0) <= map->getPixelValuei(posX, posY, 0))
-				return 1;
+				tempx = 1;
 
 	// Test for top and bottom
 	if (posY != 0 && posY != map->getHeight() - 1)
 		if (map->getPixelValuei(posX, posY + 1, 0) <= map->getPixelValuei(posX, posY, 0))
 			if (map->getPixelValuei(posX, posY - 1, 0) <= map->getPixelValuei(posX, posY, 0))
-				return 1;
+				tempy = 1;
+
+	if (tempx && tempy)
+		return 1;
 
 	return 0;
 }
