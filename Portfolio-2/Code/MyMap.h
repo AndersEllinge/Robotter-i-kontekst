@@ -24,5 +24,7 @@ private:
 	bool isNextTo4Way(Image* map, int posX, int posY, int target);
 	bool isNextTo8Way(Image* map, int posX, int posY, int target);
 	bool isPartOfGVD(Image* map, int posX, int posY);
+
+
 };
 
