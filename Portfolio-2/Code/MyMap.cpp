@@ -27,7 +27,7 @@ void MyMap::createBrushfire()
 			for (int height = 0; height < brushfireMap->getHeight(); height++) { // Runs through all heights for specific width 
 				
 				if (brushfireMap->getPixelValuei(width, height, 0) == 255) { // Test for blank space
-					if (isNextTo4Way(brushfireMap, width, height, range) == 1) { // Test for change of space
+					if (isNextTo8Way(brushfireMap, width, height, range) == 1) { // Test for change of space
 						brushfireMap->setPixel8U(width, height, range + 1); // Set blank space to new value
 
 					}
@@ -76,6 +76,44 @@ bool MyMap::isNextTo4Way(Image* map, int posX, int posY, int target)
 	if (posY != map->getHeight() - 1) // Test for border
 		if (map->getPixelValuei(posX, posY + 1, 0) == target) // Test right
 			return 1;
+
+	return 0;
+}
+
+bool MyMap::isNextTo8Way(Image * map, int posX, int posY, int target)
+{
+	if (posX != 0) // Test for border
+		if (map->getPixelValuei(posX - 1, posY, 0) == target) // Test below
+			return 1;
+
+	if (posX != map->getWidth() - 1) // Test for border
+		if (map->getPixelValuei(posX + 1, posY, 0) == target) // Test above
+			return 1;
+
+	if (posY != 0) // Test for border
+		if (map->getPixelValuei(posX, posY - 1, 0) == target) // Test left
+			return 1;
+
+	if (posY != map->getHeight() - 1) // Test for border
+		if (map->getPixelValuei(posX, posY + 1, 0) == target) // Test right
+			return 1;
+
+	if (posX != 0 || posY != 0) // Test for border
+		if (map->getPixelValuei(posX - 1, posY + 1, 0) == target) // Test below - left
+			return 1;
+
+	if (posX != 0 || posY != map->getHeight() - 1) // Test for border
+		if (map->getPixelValuei(posX - 1, posY - 1, 0) == target) // Test below - right
+			return 1;
+
+	if (posX != map->getWidth() - 1 || posY != 0) // Test for border
+		if (map->getPixelValuei(posX + 1, posY + 1, 0) == target) // Test above - left
+			return 1;
+
+	if (posX != map->getWidth() - 1 || posY != map->getHeight() - 1) // Test for border
+		if (map->getPixelValuei(posX + 1, posY - 1, 0) == target) // Test above - right
+			return 1;
+
 
 	return 0;
 }
@@ -136,13 +174,13 @@ bool MyMap::isPartOfGVD(Image * map, int posX, int posY)
 		if (map->getPixelValuei(posX + 1, posY - 1, 0) == map->getPixelValuei(posX, posY, 0))
 			if (map->getPixelValuei(posX + 2, posY - 2, 0) < map->getPixelValuei(posX, posY, 0))
 				return 1;
-		if (map->getPixelValuei(posX + 1, posY - 1, 0) <= map->getPixelValuei(posX, posY, 0))
+		if (map->getPixelValuei(posX + 1, posY - 1, 0) < map->getPixelValuei(posX, posY, 0))
 			return 1;
 	}		
 
 	if (map->getPixelValuei(posX + 1, posY - 1, 0) < map->getPixelValuei(posX, posY, 0)) {
 		if (map->getPixelValuei(posX - 1, posY + 1, 0) == map->getPixelValuei(posX, posY, 0))
-			if (map->getPixelValuei(posX - 2, posY + 2, 0) == map->getPixelValuei(posX, posY, 0))
+			if (map->getPixelValuei(posX - 2, posY + 2, 0) < map->getPixelValuei(posX, posY, 0))
 				return 1;
 		if (map->getPixelValuei(posX - 1, posY + 1, 0) < map->getPixelValuei(posX, posY, 0))
 			return 1;
