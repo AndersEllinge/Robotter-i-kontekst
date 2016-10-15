@@ -14,6 +14,7 @@ public:
 
 	void createBrushfirePotentialField();
 	void createBrushfireCollisionDetection();
+	void siftGVD();
 	void createGVD();
 
 
@@ -22,6 +23,7 @@ private:
 	Image* potentialFieldMap;
 	Image* collisionDetectionMap;
 	Image* gvdMap;
+	Image* siftedMap;
 
 	bool isNextTo4Way(Image* map, int posX, int posY, int target);
 	bool isNextTo8Way(Image* map, int posX, int posY, int target);

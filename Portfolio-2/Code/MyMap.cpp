@@ -13,6 +13,7 @@ MyMap::MyMap(Image * inputMap)
 	potentialFieldMap = nullptr;
 	collisionDetectionMap = nullptr;
 	gvdMap = nullptr;
+	siftedMap = nullptr;
 }
 
 
@@ -108,6 +109,35 @@ void MyMap::createBrushfireCollisionDetection()
 	collisionDetectionMap->saveAsPGM("collisionDetectionMap.pgm"); // Save output
 	gvdMap->saveAsPGM("gvdMap.pgm");
 }
+
+void MyMap::siftGVD()
+{
+	siftedMap = map->copyFlip(0, 0); // Create copy of map
+
+	std::vector<std::vector<int>> siftedGVD;
+
+	for (int width = 0; width < gvdMap->getWidth(); width++) {
+		for (int height = 0; height < gvdMap->getHeight(); height++) {
+			if (gvdMap->getPixelValuei(width, height, 0) == 1) { 
+				if ((width % 2 == 0) && (height % 2 == 0))
+				{
+					siftedGVD.push_back({ width,height });
+				}
+				if ((width % 2 != 0) && (height % 2 != 0))
+				{
+					siftedGVD.push_back({ width,height });
+				}
+			}
+		}
+	}
+	for (int i = 0; i < siftedGVD.size(); i++) {
+		siftedMap->setPixel8U(siftedGVD[i][0], siftedGVD[i][1], 1); // color pixel
+	}
+	siftedMap->saveAsPGM("siftedMap.pgm");
+
+}
+
+
 
 void MyMap::createGVD()
 {

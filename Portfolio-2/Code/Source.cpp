@@ -10,6 +10,7 @@ int main() {
 
 	//map.createBrushfirePotentialField();
 	map.createBrushfireCollisionDetection();
+	map.siftGVD();
 	//map.createGVD();
 	//while(1)
 	//{ }
