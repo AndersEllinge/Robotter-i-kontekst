@@ -12,13 +12,15 @@ public:
 	MyMap(Image* inputMap);
 	~MyMap();
 
-	void createBrushfire();
+	void createBrushfirePotentialField();
+	void createBrushfireCollisionDetection();
 	void createGVD();
 
 
 private:
 	Image* map;
-	Image* brushfireMap;
+	Image* potentialFieldMap;
+	Image* collisionDetectionMap;
 	Image* gvdMap;
 
 	bool isNextTo4Way(Image* map, int posX, int posY, int target);

@@ -8,8 +8,12 @@ int main() {
 
 	MyMap map(img);
 
-	map.createBrushfire();
-	map.createGVD();
+	//map.createBrushfirePotentialField();
+	map.createBrushfireCollisionDetection();
+	//map.createGVD();
+	//while(1)
+	//{ }
+
 
 	return 1;
 }

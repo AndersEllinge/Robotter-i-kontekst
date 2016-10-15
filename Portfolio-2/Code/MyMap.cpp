@@ -1,6 +1,7 @@
 #include "MyMap.h"
-
-
+#include <iostream>
+#include <vector>
+#include <array>
 
 MyMap::MyMap()
 {
@@ -9,7 +10,8 @@ MyMap::MyMap()
 MyMap::MyMap(Image * inputMap)
 {
 	map = inputMap;
-	brushfireMap = nullptr;
+	potentialFieldMap = nullptr;
+	collisionDetectionMap = nullptr;
 	gvdMap = nullptr;
 }
 
@@ -18,17 +20,17 @@ MyMap::~MyMap()
 {
 }
 
-void MyMap::createBrushfire()
+void MyMap::createBrushfirePotentialField()
 {
-	brushfireMap = map->copyFlip(0,0); // Create copy of map
+	potentialFieldMap = map->copyFlip(0,0); // Create copy of map
 
 	for (int range = 0; range < 255; range++) { // Runs through every possible brushfire value
-		for (int width = 0; width < brushfireMap->getWidth(); width++) { // Runs through all widths
-			for (int height = 0; height < brushfireMap->getHeight(); height++) { // Runs through all heights for specific width 
+		for (int width = 0; width < potentialFieldMap->getWidth(); width++) { // Runs through all widths
+			for (int height = 0; height < potentialFieldMap->getHeight(); height++) { // Runs through all heights for specific width 
 				
-				if (brushfireMap->getPixelValuei(width, height, 0) == 255) { // Test for blank space
-					if (isNextTo8Way(brushfireMap, width, height, range) == 1) { // Test for change of space
-						brushfireMap->setPixel8U(width, height, range + 1); // Set blank space to new value
+				if (potentialFieldMap->getPixelValuei(width, height, 0) == 255) { // Test for blank space
+					if (isNextTo8Way(potentialFieldMap, width, height, range) == 1) { // Test for change of space
+						potentialFieldMap->setPixel8U(width, height, range + 1); // Set blank space to new value
 
 					}
 				}
@@ -36,20 +38,88 @@ void MyMap::createBrushfire()
 		}
 	}
 
-	brushfireMap->saveAsPGM("brushfire.pgm"); // Save output
+	potentialFieldMap->saveAsPGM("potentialFieldMap.pgm"); // Save output
+}
+
+void MyMap::createBrushfireCollisionDetection()
+{
+	std::vector<std::vector<int>> pixelsToBeColored;
+
+	collisionDetectionMap = map->copyFlip(0, 0); // Create copy of map
+	gvdMap = map->copyFlip(0, 0);
+
+	int min = 0; // minimum distance from the closest edges of the map
+	if (collisionDetectionMap->getHeight() > collisionDetectionMap->getWidth())
+		min = map->getWidth() / 2 + 1;
+	else
+		min = map->getHeight() / 2 + 1;
+
+	for (int i = 0; i < min; i++) { // Times we need to keep brushfiring to be sure we get all collisions
+		std::cout << "1.";
+		for (int color = 0; color < 31; color+=5) { // Going through all the shades from white to black
+			for (int width = 0; width < collisionDetectionMap->getWidth(); width++) { // Iterating through Y
+				for (int height = 0; height < collisionDetectionMap->getHeight(); height++) { // Iterating through X
+					if (collisionDetectionMap->getPixelValuei(width, height, 0) == 255 ) { // If the pixel is white
+						if (isNextTo8Way(collisionDetectionMap, width, height, color)) { // If a pixel around the current pixel is the color
+							pixelsToBeColored.push_back({ width, height, color }); // add pixel to the list of pixel to be colored on the collisionDetectionMap
+							for (int j = 0; j < pixelsToBeColored.size(); j++) {
+
+								if ((pixelsToBeColored[j][0] == width) && (pixelsToBeColored[j][1] == height) && (pixelsToBeColored[j][2] != color)) // check if list is same as other pixel in list with diff color 
+									gvdMap->setPixel8U(width, height, 1); // Add pixel to gvdMap
+
+								if (pixelsToBeColored[j][0] == width + 1) // check if list is neighbor of pixels of different colors
+									if (pixelsToBeColored[j][1] == height)
+										if (pixelsToBeColored[j][2] != color) {
+											gvdMap->setPixel8U(width, height, 1);
+											gvdMap->setPixel8U(pixelsToBeColored[j][0], pixelsToBeColored[j][1], 1);
+										}
+
+								if (pixelsToBeColored[j][0] == width - 1) // check if list is neighbor of pixels of different colors
+									if (pixelsToBeColored[j][1] == height)
+										if (pixelsToBeColored[j][2] != color) {
+											gvdMap->setPixel8U(width, height, 1);
+											gvdMap->setPixel8U(pixelsToBeColored[j][0], pixelsToBeColored[j][1], 1);
+										}
+
+									if (pixelsToBeColored[j][1] == height - 1) // check if list is neighbor of pixels of different colors
+										if (pixelsToBeColored[j][0] == width)
+											if (pixelsToBeColored[j][2] != color) {
+												gvdMap->setPixel8U(width, height, 1);
+												gvdMap->setPixel8U(pixelsToBeColored[j][0], pixelsToBeColored[j][1], 1);
+											}
+
+									if (pixelsToBeColored[j][1] == height + 1) // check if list is neighbor of pixels of different colors
+										if (pixelsToBeColored[j][0] == width)
+											if (pixelsToBeColored[j][2] != color) {
+												gvdMap->setPixel8U(width, height, 1);
+												gvdMap->setPixel8U(pixelsToBeColored[j][0], pixelsToBeColored[j][1], 1);
+											}
+							}
+						}
+					}
+				}
+			}
+		}
+		for (int i = 0; i < pixelsToBeColored.size(); i++) {
+			collisionDetectionMap->setPixel8U(pixelsToBeColored[i][0], pixelsToBeColored[i][1], pixelsToBeColored[i][2]); // color pixel
+		}
+		pixelsToBeColored.clear();
+	}
+	collisionDetectionMap->saveAsPGM("collisionDetectionMap.pgm"); // Save output
+	gvdMap->saveAsPGM("gvdMap.pgm");
 }
 
 void MyMap::createGVD()
 {
-	if (brushfireMap == nullptr) // If no brushfire was done, do brushfire
-		createBrushfire();
+	if (potentialFieldMap == nullptr) // If no brushfire was done, do brushfire
+		createBrushfirePotentialField();
 
 	gvdMap = map->copyFlip(0,0); // Create copy of map
 
-	for (int width = 0; width < brushfireMap->getWidth(); width++) { // Runs through all widths
-		for (int height = 0; height < brushfireMap->getHeight(); height++) { // Runs through all heights for specific width 
+	for (int width = 0; width < potentialFieldMap->getWidth(); width++) { // Runs through all widths
+		for (int height = 0; height < potentialFieldMap->getHeight(); height++) { // Runs through all heights for specific width 
 
-			if (isPartOfGVD(brushfireMap, width, height)) // Check if point is on GVD
+			if (isPartOfGVD(potentialFieldMap, width, height)) // Check if point is on GVD
 				gvdMap->setPixel8U(width, height, 150); // Mark GVD point
 
 		}
@@ -80,38 +150,38 @@ bool MyMap::isNextTo4Way(Image* map, int posX, int posY, int target)
 	return 0;
 }
 
-bool MyMap::isNextTo8Way(Image * map, int posX, int posY, int target)
+bool MyMap::isNextTo8Way(Image* map, int posX, int posY, int target)
 {
 	if (posX != 0) // Test for border
-		if (map->getPixelValuei(posX - 1, posY, 0) == target) // Test below
+		if (map->getPixelValuei(posX - 1, posY, 0) == target) // Test left
 			return 1;
 
-	if (posX != map->getWidth() - 1) // Test for border
-		if (map->getPixelValuei(posX + 1, posY, 0) == target) // Test above
+	if (posX != (map->getWidth() - 1)) // Test for border
+		if (map->getPixelValuei(posX + 1, posY, 0) == target) // Test right
 			return 1;
 
 	if (posY != 0) // Test for border
-		if (map->getPixelValuei(posX, posY - 1, 0) == target) // Test left
+		if (map->getPixelValuei(posX, posY - 1, 0) == target) // Test top
 			return 1;
 
-	if (posY != map->getHeight() - 1) // Test for border
-		if (map->getPixelValuei(posX, posY + 1, 0) == target) // Test right
+	if (posY != (map->getHeight() - 1)) // Test for border
+		if (map->getPixelValuei(posX, posY + 1, 0) == target) // Test bottom
+			return 1;
+
+	if (posX != 0 || (posY != map->getHeight() - 1)) // Test for border
+		if(map->getPixelValuei(posX - 1, posY +1 , 0) == target) // Test bottom - left
 			return 1;
 
 	if (posX != 0 || posY != 0) // Test for border
-		if (map->getPixelValuei(posX - 1, posY + 1, 0) == target) // Test below - left
+		if (map->getPixelValuei(posX - 1, posY - 1, 0) == target) // Test top - left
 			return 1;
 
-	if (posX != 0 || posY != map->getHeight() - 1) // Test for border
-		if (map->getPixelValuei(posX - 1, posY - 1, 0) == target) // Test below - right
+	if ((posX != map->getWidth() - 1) || (posY != map->getHeight() - 1)) // Test for border
+		if (map->getPixelValuei(posX + 1, posY + 1, 0) == target) // Test bottom - right
 			return 1;
 
-	if (posX != map->getWidth() - 1 || posY != 0) // Test for border
-		if (map->getPixelValuei(posX + 1, posY + 1, 0) == target) // Test above - left
-			return 1;
-
-	if (posX != map->getWidth() - 1 || posY != map->getHeight() - 1) // Test for border
-		if (map->getPixelValuei(posX + 1, posY - 1, 0) == target) // Test above - right
+	if ((posX != map->getWidth() - 1) || posY != 0) // Test for border
+		if (map->getPixelValuei(posX + 1, posY - 1, 0) == target) // Test top - right
 			return 1;
 
 
