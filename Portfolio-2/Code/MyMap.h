@@ -26,6 +26,12 @@ private:
 	Image* siftedMap;
 
 	bool isNextTo4Way(Image* map, int posX, int posY, int target);
+
+	bool isNextTo4WayTop(Image* map, int posX, int posY, int target);
+	bool isNextTo4WayBottom(Image* map, int posX, int posY, int target);
+	bool isNextTo4WayLeft(Image* map, int posX, int posY, int target);
+	bool isNextTo4WayRight(Image* map, int posX, int posY, int target);
+	
 	bool isNextTo8Way(Image* map, int posX, int posY, int target);
 	bool isPartOfGVD(Image* map, int posX, int posY);
 
