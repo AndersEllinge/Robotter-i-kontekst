@@ -4,7 +4,7 @@
 
 int main() {
 
-	Image* img = PPMLoader::load("map.ppm");
+	Image* img = PPMLoader::load("map.pgm");
 
 	MyMap map(img);
 
@@ -24,8 +24,7 @@ int main() {
 	}*/
 
 	map.createRoadMap();
-	map.createPath(10, 30, 100, 100);
-	map.printPath();
+	map.createPath(35, 67, 134, 158);
 
 	std::cout << "DONE" << std::endl;
 	while(1)

@@ -23,7 +23,7 @@ public:
 	bool isEdgesInTheList(int id1, int id2);
 	void printGraph();
 	void createPath(int startX, int startY, int goalX, int goalY);
-	void printPath();
+	
 	void createRoadMap();
 
 
@@ -54,6 +54,7 @@ private:
 	int findClosestValidVertex(int posX, int posY);
 	int findIndexOfVertex(int vertex);
 	void drawStraightLine(int x0, int y0, int x1, int y1);
+	void printPath(int startX, int startY, int goalX, int goalY);
 
 
 };

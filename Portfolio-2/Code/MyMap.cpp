@@ -70,19 +70,6 @@ void MyMap::createBrushfireCollisionDetection()
 
 								if ((pixelsToBeColored[j][0] == width) && (pixelsToBeColored[j][1] == height) && (pixelsToBeColored[j][2] != color)) { // check if list is same as other pixel in list with diff color 
 									gvdMap->setPixel8U(width, height, 1); // Add pixel to gvdMap
-
-
-									//vertices.push_back((width * 1000) + height); // Adding the node to list of verticies
-									//if (isNextTo4WayTop(gvdMap, width, height, 1))	// Checking for vertecies next to current vertex and making edges
-									//	edges.push_back({ (width * 1000) + height, (width * 1000) + height - 1 });
-									//if (isNextTo4WayBottom(gvdMap, width, height, 1))
-									//	edges.push_back({ (width * 1000) + height, (width * 1000) + height + 1 });
-									//if (isNextTo4WayLeft(gvdMap, width, height, 1))
-									//	edges.push_back({ (width * 1000) + height, ((width - 1) * 1000) + height });
-									//if (isNextTo4WayRight(gvdMap, width, height, 1))
-									//	edges.push_back({ (width * 1000) + height, ((width + 1) * 1000) + height });
-
-
 								}
 
 								if (pixelsToBeColored[j][0] == width + 1) // check if list is neighbor of pixels of different colors
@@ -90,19 +77,6 @@ void MyMap::createBrushfireCollisionDetection()
 										if (pixelsToBeColored[j][2] != color) {
 											gvdMap->setPixel8U(width, height, 1);
 											gvdMap->setPixel8U(pixelsToBeColored[j][0], pixelsToBeColored[j][1], 1);
-
-
-											//vertices.push_back((width * 1000) + height); // Adding the node to list of verticies
-											//if (isNextTo4WayTop(gvdMap, width, height, 1)) // Checking for vertecies next to current vertex and making edges
-											//	edges.push_back({ (width * 1000) + height, (width * 1000) + height - 1 });
-											//if (isNextTo4WayBottom(gvdMap, width, height, 1))
-											//	edges.push_back({ (width * 1000) + height, (width * 1000) + height + 1 });
-											//if (isNextTo4WayLeft(gvdMap, width, height, 1))
-											//	edges.push_back({ (width * 1000) + height, ((width - 1) * 1000) + height });
-											//if (isNextTo4WayRight(gvdMap, width, height, 1))
-											//	edges.push_back({ (width * 1000) + height, ((width + 1) * 1000) + height });
-
-
 										}
 
 								if (pixelsToBeColored[j][0] == width - 1) // check if list is neighbor of pixels of different colors
@@ -110,20 +84,6 @@ void MyMap::createBrushfireCollisionDetection()
 										if (pixelsToBeColored[j][2] != color) {
 											gvdMap->setPixel8U(width, height, 1);
 											gvdMap->setPixel8U(pixelsToBeColored[j][0], pixelsToBeColored[j][1], 1);
-
-
-											//vertices.push_back((width * 1000) + height); // Adding the node to list of verticies
-											//if (isNextTo4WayTop(gvdMap, width, height, 1)) // Checking for vertecies next to current vertex and making edges
-											//	edges.push_back({ (width * 1000) + height, (width * 1000) + height - 1 });
-											//if (isNextTo4WayBottom(gvdMap, width, height, 1))
-											//	edges.push_back({ (width * 1000) + height, (width * 1000) + height + 1 });
-											//if (isNextTo4WayLeft(gvdMap, width, height, 1))
-											//	edges.push_back({ (width * 1000) + height, ((width - 1) * 1000) + height });
-											//if (isNextTo4WayRight(gvdMap, width, height, 1))
-											//	edges.push_back({ (width * 1000) + height, ((width + 1) * 1000) + height });
-
-
-
 										}
 
 								if (pixelsToBeColored[j][1] == height - 1) // check if list is neighbor of pixels of different colors
@@ -131,19 +91,6 @@ void MyMap::createBrushfireCollisionDetection()
 										if (pixelsToBeColored[j][2] != color) {
 											gvdMap->setPixel8U(width, height, 1);
 											gvdMap->setPixel8U(pixelsToBeColored[j][0], pixelsToBeColored[j][1], 1);
-
-
-											//vertices.push_back((width * 1000) + height); // Adding the node to list of verticies
-											//if (isNextTo4WayTop(gvdMap, width, height, 1)) // Checking for vertecies next to current vertex and making edges
-											//	edges.push_back({ (width * 1000) + height, (width * 1000) + height - 1 });
-											//if (isNextTo4WayBottom(gvdMap, width, height, 1))
-											//	edges.push_back({ (width * 1000) + height, (width * 1000) + height + 1 });
-											//if (isNextTo4WayLeft(gvdMap, width, height, 1))
-											//	edges.push_back({ (width * 1000) + height, ((width - 1) * 1000) + height });
-											//if (isNextTo4WayRight(gvdMap, width, height, 1))
-											//	edges.push_back({ (width * 1000) + height, ((width + 1) * 1000) + height });
-
-
 										}
 
 								if (pixelsToBeColored[j][1] == height + 1) // check if list is neighbor of pixels of different colors
@@ -151,20 +98,6 @@ void MyMap::createBrushfireCollisionDetection()
 										if (pixelsToBeColored[j][2] != color) {
 											gvdMap->setPixel8U(width, height, 1);
 											gvdMap->setPixel8U(pixelsToBeColored[j][0], pixelsToBeColored[j][1], 1);
-
-
-											//vertices.push_back((width * 1000) + height); // Adding the node to list of verticies
-											//if (isNextTo4WayTop(gvdMap, width, height, 1)) // Checking for vertecies next to current vertex and making edges
-											//	edges.push_back({ (width * 1000) + height, (width * 1000) + height - 1 });
-											//if (isNextTo4WayBottom(gvdMap, width, height, 1))
-											//	edges.push_back({ (width * 1000) + height, (width * 1000) + height + 1 });
-											//if (isNextTo4WayLeft(gvdMap, width, height, 1))
-											//	edges.push_back({ (width * 1000) + height, ((width - 1) * 1000) + height });
-											//if (isNextTo4WayRight(gvdMap, width, height, 1))
-											//	edges.push_back({ (width * 1000) + height, ((width + 1) * 1000) + height });
-
-
-
 										}
 							}
 						}
@@ -516,8 +449,8 @@ void MyMap::printGraph()
 int MyMap::findClosestValidVertex(int posX, int posY)
 {
 	double dist;
-	double closestsDist = 100000;
-	int closestVertex = 100000;
+	double closestsDist = 1000000;
+	int closestVertex = 1000000;
 
 	for (size_t i = 0; i < vertices.size(); i++)
 	{
@@ -539,13 +472,13 @@ int MyMap::findClosestValidVertex(int posX, int posY)
 void MyMap::createPath(int startX, int startY, int goalX, int goalY)
 {
 	int startVertex = findClosestValidVertex(startX, startY);
-	if (startVertex == 100000) {
+	if (startVertex == 1000000) {
 		std::cout << "No path from start to a node in map" << std::endl;
 		return;
 	}
 
 	int goalVertex = findClosestValidVertex(goalX, goalY);
-	if (goalVertex == 100000) {
+	if (goalVertex == 1000000) {
 		std::cout << "No path from goal to a node in map" << std::endl;
 		return;
 	}
@@ -566,16 +499,30 @@ void MyMap::createPath(int startX, int startY, int goalX, int goalY)
 
 	path.push({ vertices[pointer] / 1000, vertices[pointer] % 1000 });
 
+	printPath(startX, startY, goalX, goalY);
 }
 
-void MyMap::printPath()
+void MyMap::printPath(int startX, int startY, int goalX, int goalY)
 {
+	pathMap = map->copyFlip(0, 0);
 	std::cout << "Path is: " << std::endl;
+	drawStraightLine(startX, startY, path.top()[0], path.top()[1]);
+	int prevX = 0;
+	int prevY = 0;
+	int prev2X = 0;
+	int prev2Y = 0;
 	while (!path.empty()) {
 		std::cout << path.top()[0] << ", " << path.top()[1] << std::endl;
+		pathMap->setPixel8U(path.top()[0], path.top()[1], 100);
+		prev2X = prevX;
+		prev2Y = prevY;
+		prevX = path.top()[0];
+		prevY = path.top()[1];
 		path.pop();
 	}
+	drawStraightLine(goalX, goalY, prev2X, prev2Y);
 	std::cout << "--End of path--" << std::endl;
+	pathMap->saveAsPGM("pathMap.pgm");
 }
 
 void MyMap::createRoadMap()
@@ -595,9 +542,6 @@ int MyMap::findIndexOfVertex(int vertex)
 
 void MyMap::drawStraightLine(int x0, int y0, int x1, int y1)
 {
-
-	pathMap = map->copyFlip(0, 0);
-
 	if (x0 < x1) {
 		int deltaX = x1 - x0;
 		int deltaY = y1 - y0;
@@ -614,7 +558,7 @@ void MyMap::drawStraightLine(int x0, int y0, int x1, int y1)
 
 			for (int x = x0; x < x1; x++)
 			{
-				pathMap->setPixel8U(x, y, 150);
+				pathMap->setPixel8U(x, y, 100);
 
 				if (deltaErr >= 0) {
 					if (y1 > y0)
@@ -637,8 +581,7 @@ void MyMap::drawStraightLine(int x0, int y0, int x1, int y1)
 				int x = x1;
 				for (int y = y1; y < y0; y++)
 				{
-					if (pathMap->getPixelValuei(x, y, 0) != 0)
-						pathMap->setPixel8U(x, y, 150);
+					pathMap->setPixel8U(x, y, 100);
 
 					if (deltaErr >= 0) {
 						if (x1 > x0)
@@ -656,8 +599,7 @@ void MyMap::drawStraightLine(int x0, int y0, int x1, int y1)
 				int x = x0;
 				for (int y = y0; y < y1; y++)
 				{
-					if (pathMap->getPixelValuei(x, y, 0) != 0)
-						pathMap->setPixel8U(x, y, 150);
+					pathMap->setPixel8U(x, y, 100);
 
 					if (deltaErr >= 0) {
 						if (x1 > x0)
@@ -690,8 +632,7 @@ void MyMap::drawStraightLine(int x0, int y0, int x1, int y1)
 			for (int x = x1; x < x0; x++)
 			{
 
-				if (pathMap->getPixelValuei(x, y, 0) != 0)
-					pathMap->setPixel8U(x, y, 150);
+				pathMap->setPixel8U(x, y, 100);
 
 				if (deltaErr >= 0) {
 					if (y1 > y0)
@@ -714,8 +655,7 @@ void MyMap::drawStraightLine(int x0, int y0, int x1, int y1)
 				int x = x1;
 				for (int y = y1; y < y0; y++)
 				{
-					if (pathMap->getPixelValuei(x, y, 0) != 0)
-						pathMap->setPixel8U(x, y, 150);
+					pathMap->setPixel8U(x, y, 100);
 
 					if (deltaErr >= 0) {
 						if (x1 > x0)
@@ -733,8 +673,7 @@ void MyMap::drawStraightLine(int x0, int y0, int x1, int y1)
 				int x = x0;
 				for (int y = y0; y < y1; y++)
 				{
-					if (pathMap->getPixelValuei(x, y, 0) != 0)
-						pathMap->setPixel8U(x, y, 150);
+					pathMap->setPixel8U(x, y, 100);
 
 					if (deltaErr >= 0) {
 						if (x1 > x0)
@@ -770,7 +709,7 @@ bool MyMap::isPathClear(int x0, int y0, int x1, int y1)
 
 			for (int x = x0; x < x1; x++)
 			{
-				if (map->getPixelValuei(x, y, 0) == 0)
+				if (map->getPixelValuei(x, y, 0) != 255)
 					return 0;
 
 				if (deltaErr >= 0) {
@@ -794,7 +733,7 @@ bool MyMap::isPathClear(int x0, int y0, int x1, int y1)
 				int x = x1;
 				for (int y = y1; y < y0; y++)
 				{
-					if (map->getPixelValuei(x, y, 0) == 0)
+					if (map->getPixelValuei(x, y, 0) != 255)
 						return 0;
 
 					if (deltaErr >= 0) {
@@ -813,7 +752,7 @@ bool MyMap::isPathClear(int x0, int y0, int x1, int y1)
 				int x = x0;
 				for (int y = y0; y < y1; y++)
 				{
-					if (map->getPixelValuei(x, y, 0) == 0)
+					if (map->getPixelValuei(x, y, 0) != 255)
 						return 0;
 
 					if (deltaErr >= 0) {
@@ -847,7 +786,7 @@ bool MyMap::isPathClear(int x0, int y0, int x1, int y1)
 			for (int x = x1; x < x0; x++)
 			{
 
-				if (map->getPixelValuei(x, y, 0) == 0)
+				if (map->getPixelValuei(x, y, 0) != 255)
 					return 0;
 
 				if (deltaErr >= 0) {
@@ -871,7 +810,7 @@ bool MyMap::isPathClear(int x0, int y0, int x1, int y1)
 				int x = x1;
 				for (int y = y1; y < y0; y++)
 				{
-					if (map->getPixelValuei(x, y, 0) == 0)
+					if (map->getPixelValuei(x, y, 0) != 255)
 						return 0;
 
 					if (deltaErr >= 0) {
@@ -890,7 +829,7 @@ bool MyMap::isPathClear(int x0, int y0, int x1, int y1)
 				int x = x0;
 				for (int y = y0; y < y1; y++)
 				{
-					if (map->getPixelValuei(x, y, 0) == 0)
+					if (map->getPixelValuei(x, y, 0) != 255)
 						return 0;
 
 					if (deltaErr >= 0) {
