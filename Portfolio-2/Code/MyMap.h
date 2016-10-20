@@ -16,7 +16,12 @@ public:
 	void createBrushfireCollisionDetection();
 	void siftGVD();
 	void createGVD();
+	void findVertices();
+	void findEdges();
+	bool isEdgesInTheList(int id1, int id2);
 
+	std::vector<int> vertices;
+	std::vector<std::vector<int>> edges;
 
 private:
 	Image* map;

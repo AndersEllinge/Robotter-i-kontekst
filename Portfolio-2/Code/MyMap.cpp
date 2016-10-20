@@ -55,11 +55,13 @@ void MyMap::createBrushfireCollisionDetection()
 	else
 		min = map->getHeight() / 2 + 1;
 
+	std::cout << "When " << min-1 << " is reached, then the GVD is found and drawn!" << std::endl;
+
 	for (int i = 0; i < min; i++) { // Times we need to keep brushfiring to be sure we get all collisions
-		std::cout << "1.";
+		std::cout << i << std::endl;
 		for (int color = 0; color < 31; color+=5) { // Going through all the shades from white to black
-			for (int width = 0; width < collisionDetectionMap->getWidth(); width++) { // Iterating through Y
-				for (int height = 0; height < collisionDetectionMap->getHeight(); height++) { // Iterating through X
+			for (int width = 0; width < collisionDetectionMap->getWidth(); width++) { // Iterating through X
+				for (int height = 0; height < collisionDetectionMap->getHeight(); height++) { // Iterating through Y
 					if (collisionDetectionMap->getPixelValuei(width, height, 0) == 255 ) { // If the pixel is white
 						if (isNextTo8Way(collisionDetectionMap, width, height, color)) { // If a pixel around the current pixel is the color
 							pixelsToBeColored.push_back({ width, height, color }); // add pixel to the list of pixel to be colored on the collisionDetectionMap
@@ -67,15 +69,19 @@ void MyMap::createBrushfireCollisionDetection()
 
 								if ((pixelsToBeColored[j][0] == width) && (pixelsToBeColored[j][1] == height) && (pixelsToBeColored[j][2] != color)) { // check if list is same as other pixel in list with diff color 
 									gvdMap->setPixel8U(width, height, 1); // Add pixel to gvdMap
-									vertices.pushback((width * 1000) + height); // Adding the node to list of verticies
-									if (isNextTo4WayTop(gvdMap, width, height, 1))	// Checking for vertecies next to current vertex and making edges
-										edges.pushback({ (width * 1000) + height, (width * 1000) + height - 1 });
-									if (isNextTo4WayBottom(gvdMap, width, height, 1))
-										edges.pushback({ (width * 1000) + height, (width * 1000) + height + 1 });
-									if (isNextTo4WayLeft(gvdMap, width, height, 1))
-										edges.pushback({ (width * 1000) + height, ((width - 1) * 1000) + height });
-									if (isNextTo4WayRight(gvdMap, width, height, 1))
-										edges.pushback({ (width * 1000) + height, ((width + 1) * 1000) + height });
+
+
+									//vertices.push_back((width * 1000) + height); // Adding the node to list of verticies
+									//if (isNextTo4WayTop(gvdMap, width, height, 1))	// Checking for vertecies next to current vertex and making edges
+									//	edges.push_back({ (width * 1000) + height, (width * 1000) + height - 1 });
+									//if (isNextTo4WayBottom(gvdMap, width, height, 1))
+									//	edges.push_back({ (width * 1000) + height, (width * 1000) + height + 1 });
+									//if (isNextTo4WayLeft(gvdMap, width, height, 1))
+									//	edges.push_back({ (width * 1000) + height, ((width - 1) * 1000) + height });
+									//if (isNextTo4WayRight(gvdMap, width, height, 1))
+									//	edges.push_back({ (width * 1000) + height, ((width + 1) * 1000) + height });
+
+
 								}
 
 								if (pixelsToBeColored[j][0] == width + 1) // check if list is neighbor of pixels of different colors
@@ -83,15 +89,19 @@ void MyMap::createBrushfireCollisionDetection()
 										if (pixelsToBeColored[j][2] != color) {
 											gvdMap->setPixel8U(width, height, 1);
 											gvdMap->setPixel8U(pixelsToBeColored[j][0], pixelsToBeColored[j][1], 1);
-											vertices.pushback((width * 1000) + height); // Adding the node to list of verticies
-											if (isNextTo4WayTop(gvdMap, width, height, 1)) // Checking for vertecies next to current vertex and making edges
-												edges.pushback({ (width * 1000) + height, (width * 1000) + height - 1 });
-											if (isNextTo4WayBottom(gvdMap, width, height, 1))
-												edges.pushback({ (width * 1000) + height, (width * 1000) + height + 1 });
-											if (isNextTo4WayLeft(gvdMap, width, height, 1))
-												edges.pushback({ (width * 1000) + height, ((width - 1) * 1000) + height });
-											if (isNextTo4WayRight(gvdMap, width, height, 1))
-												edges.pushback({ (width * 1000) + height, ((width + 1) * 1000) + height });
+
+
+											//vertices.push_back((width * 1000) + height); // Adding the node to list of verticies
+											//if (isNextTo4WayTop(gvdMap, width, height, 1)) // Checking for vertecies next to current vertex and making edges
+											//	edges.push_back({ (width * 1000) + height, (width * 1000) + height - 1 });
+											//if (isNextTo4WayBottom(gvdMap, width, height, 1))
+											//	edges.push_back({ (width * 1000) + height, (width * 1000) + height + 1 });
+											//if (isNextTo4WayLeft(gvdMap, width, height, 1))
+											//	edges.push_back({ (width * 1000) + height, ((width - 1) * 1000) + height });
+											//if (isNextTo4WayRight(gvdMap, width, height, 1))
+											//	edges.push_back({ (width * 1000) + height, ((width + 1) * 1000) + height });
+
+
 										}
 
 								if (pixelsToBeColored[j][0] == width - 1) // check if list is neighbor of pixels of different colors
@@ -99,15 +109,20 @@ void MyMap::createBrushfireCollisionDetection()
 										if (pixelsToBeColored[j][2] != color) {
 											gvdMap->setPixel8U(width, height, 1);
 											gvdMap->setPixel8U(pixelsToBeColored[j][0], pixelsToBeColored[j][1], 1);
-											vertices.pushback((width * 1000) + height); // Adding the node to list of verticies
-											if (isNextTo4WayTop(gvdMap, width, height, 1)) // Checking for vertecies next to current vertex and making edges
-												edges.pushback({ (width * 1000) + height, (width * 1000) + height - 1 });
-											if (isNextTo4WayBottom(gvdMap, width, height, 1))
-												edges.pushback({ (width * 1000) + height, (width * 1000) + height + 1 });
-											if (isNextTo4WayLeft(gvdMap, width, height, 1))
-												edges.pushback({ (width * 1000) + height, ((width - 1) * 1000) + height });
-											if (isNextTo4WayRight(gvdMap, width, height, 1))
-												edges.pushback({ (width * 1000) + height, ((width + 1) * 1000) + height });
+
+
+											//vertices.push_back((width * 1000) + height); // Adding the node to list of verticies
+											//if (isNextTo4WayTop(gvdMap, width, height, 1)) // Checking for vertecies next to current vertex and making edges
+											//	edges.push_back({ (width * 1000) + height, (width * 1000) + height - 1 });
+											//if (isNextTo4WayBottom(gvdMap, width, height, 1))
+											//	edges.push_back({ (width * 1000) + height, (width * 1000) + height + 1 });
+											//if (isNextTo4WayLeft(gvdMap, width, height, 1))
+											//	edges.push_back({ (width * 1000) + height, ((width - 1) * 1000) + height });
+											//if (isNextTo4WayRight(gvdMap, width, height, 1))
+											//	edges.push_back({ (width * 1000) + height, ((width + 1) * 1000) + height });
+
+
+
 										}
 
 								if (pixelsToBeColored[j][1] == height - 1) // check if list is neighbor of pixels of different colors
@@ -115,15 +130,19 @@ void MyMap::createBrushfireCollisionDetection()
 										if (pixelsToBeColored[j][2] != color) {
 											gvdMap->setPixel8U(width, height, 1);
 											gvdMap->setPixel8U(pixelsToBeColored[j][0], pixelsToBeColored[j][1], 1);
-											vertices.pushback((width * 1000) + height); // Adding the node to list of verticies
-											if (isNextTo4WayTop(gvdMap, width, height, 1)) // Checking for vertecies next to current vertex and making edges
-												edges.pushback({ (width * 1000) + height, (width * 1000) + height - 1 });
-											if (isNextTo4WayBottom(gvdMap, width, height, 1))
-												edges.pushback({ (width * 1000) + height, (width * 1000) + height + 1 });
-											if (isNextTo4WayLeft(gvdMap, width, height, 1))
-												edges.pushback({ (width * 1000) + height, ((width - 1) * 1000) + height });
-											if (isNextTo4WayRight(gvdMap, width, height, 1))
-												edges.pushback({ (width * 1000) + height, ((width + 1) * 1000) + height });
+
+
+											//vertices.push_back((width * 1000) + height); // Adding the node to list of verticies
+											//if (isNextTo4WayTop(gvdMap, width, height, 1)) // Checking for vertecies next to current vertex and making edges
+											//	edges.push_back({ (width * 1000) + height, (width * 1000) + height - 1 });
+											//if (isNextTo4WayBottom(gvdMap, width, height, 1))
+											//	edges.push_back({ (width * 1000) + height, (width * 1000) + height + 1 });
+											//if (isNextTo4WayLeft(gvdMap, width, height, 1))
+											//	edges.push_back({ (width * 1000) + height, ((width - 1) * 1000) + height });
+											//if (isNextTo4WayRight(gvdMap, width, height, 1))
+											//	edges.push_back({ (width * 1000) + height, ((width + 1) * 1000) + height });
+
+
 										}
 
 								if (pixelsToBeColored[j][1] == height + 1) // check if list is neighbor of pixels of different colors
@@ -131,15 +150,20 @@ void MyMap::createBrushfireCollisionDetection()
 										if (pixelsToBeColored[j][2] != color) {
 											gvdMap->setPixel8U(width, height, 1);
 											gvdMap->setPixel8U(pixelsToBeColored[j][0], pixelsToBeColored[j][1], 1);
-											vertices.pushback((width * 1000) + height); // Adding the node to list of verticies
-											if (isNextTo4WayTop(gvdMap, width, height, 1)) // Checking for vertecies next to current vertex and making edges
-												edges.pushback({ (width * 1000) + height, (width * 1000) + height - 1 });
-											if (isNextTo4WayBottom(gvdMap, width, height, 1))
-												edges.pushback({ (width * 1000) + height, (width * 1000) + height + 1 });
-											if (isNextTo4WayLeft(gvdMap, width, height, 1))
-												edges.pushback({ (width * 1000) + height, ((width - 1) * 1000) + height });
-											if (isNextTo4WayRight(gvdMap, width, height, 1))
-												edges.pushback({ (width * 1000) + height, ((width + 1) * 1000) + height });
+
+
+											//vertices.push_back((width * 1000) + height); // Adding the node to list of verticies
+											//if (isNextTo4WayTop(gvdMap, width, height, 1)) // Checking for vertecies next to current vertex and making edges
+											//	edges.push_back({ (width * 1000) + height, (width * 1000) + height - 1 });
+											//if (isNextTo4WayBottom(gvdMap, width, height, 1))
+											//	edges.push_back({ (width * 1000) + height, (width * 1000) + height + 1 });
+											//if (isNextTo4WayLeft(gvdMap, width, height, 1))
+											//	edges.push_back({ (width * 1000) + height, ((width - 1) * 1000) + height });
+											//if (isNextTo4WayRight(gvdMap, width, height, 1))
+											//	edges.push_back({ (width * 1000) + height, ((width + 1) * 1000) + height });
+
+
+
 										}
 							}
 						}
@@ -204,6 +228,55 @@ void MyMap::createGVD()
 	gvdMap->saveAsPGM("gvd.pgm"); // Save output
 }
 
+void MyMap::findVertices()
+{
+	for (int width = 0; width < gvdMap->getWidth(); width++) { // Iterating through X
+		for (int height = 0; height < gvdMap->getHeight(); height++) { // Iterating through Y
+			if (gvdMap->getPixelValuei(width, height, 0) == 1) { // If the pixel is GVD
+				vertices.push_back((width * 1000) + height);
+			}
+		}
+	}
+}
+
+void MyMap::findEdges()
+{
+	for (int i = 0; i < vertices.size(); i++) {
+		
+		if (isNextTo4WayTop(gvdMap, vertices[i] / 1000, vertices[i] % 1000, 1))
+			if (!isEdgesInTheList(vertices[i], vertices[i] - 1)) {
+				edges.push_back({ vertices[i], vertices[i] - 1 });
+			}
+
+		if (isNextTo4WayBottom(gvdMap, vertices[i] / 1000, vertices[i] % 1000, 1))
+			if (!isEdgesInTheList(vertices[i], vertices[i] + 1)) {
+				edges.push_back({ vertices[i], vertices[i] + 1 });
+			}
+
+		if (isNextTo4WayLeft(gvdMap, vertices[i] / 1000, vertices[i] % 1000, 1))
+			if (!isEdgesInTheList(vertices[i], vertices[i] - 1000)) {
+				edges.push_back({ vertices[i], vertices[i] - 1000 });
+			}
+
+		if (isNextTo4WayRight(gvdMap, vertices[i] / 1000, vertices[i] % 1000, 1))
+			if (!isEdgesInTheList(vertices[i], vertices[i] + 1000)) {
+				edges.push_back({ vertices[i], vertices[i] + 1000 });
+			}
+
+	}
+}
+
+bool MyMap::isEdgesInTheList(int id1, int id2)
+{
+	for (int k = 0; k < edges.size(); k++) {
+		if (edges[k][0] == id1 && edges[k][1] == id2)
+			return true;
+		if (edges[k][0] == id2 && edges[k][1] == id1)
+			return true;
+	}
+	return false;
+}
+
 bool MyMap::isNextTo4Way(Image* map, int posX, int posY, int target)
 {
 
@@ -228,30 +301,34 @@ bool MyMap::isNextTo4Way(Image* map, int posX, int posY, int target)
 
 bool MyMap::isNextTo4WayTop(Image * map, int posX, int posY, int target)
 {
-	if (posX != map->getWidth() - 1) // Test for border
-		if (map->getPixelValuei(posX + 1, posY, 0) == target) // Test above
-			return 1;;
+	if (posX != 0) // Test for border
+		if (map->getPixelValuei(posX , posY - 1, 0) == target) // Test above
+			return 1;
+	return 0;
 }
 
 bool MyMap::isNextTo4WayBottom(Image * map, int posX, int posY, int target)
 {
-	if (posX != 0) // Test for border
-		if (map->getPixelValuei(posX - 1, posY, 0) == target) // Test below
+	if (posX != map->getHeight() - 1) // Test for border
+		if (map->getPixelValuei(posX, posY + 1, 0) == target) // Test below
 			return 1;
+	return 0;
 }
 
 bool MyMap::isNextTo4WayLeft(Image * map, int posX, int posY, int target)
 {
 	if (posY != 0) // Test for border
-		if (map->getPixelValuei(posX, posY - 1, 0) == target) // Test left
+		if (map->getPixelValuei(posX - 1, posY, 0) == target) // Test left
 			return 1;
+	return 0;
 }
 
 bool MyMap::isNextTo4WayRight(Image * map, int posX, int posY, int target)
 {
-	if (posY != map->getHeight() - 1) // Test for border
-		if (map->getPixelValuei(posX, posY + 1, 0) == target) // Test right
+	if (posX != map->getWidth() - 1) // Test for border
+		if (map->getPixelValuei(posX + 1, posY, 0) == target) // Test right
 			return 1;
+	return 0;
 }
 
 bool MyMap::isNextTo8Way(Image* map, int posX, int posY, int target)
