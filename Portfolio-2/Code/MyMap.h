@@ -1,6 +1,8 @@
 #pragma once
 #include "Image.hpp"
 #include "PPMLoader.hpp"
+#include <stack>
+#include <queue>
 
 using namespace rw::sensor;
 using namespace rw::loaders;
@@ -19,16 +21,23 @@ public:
 	void findVertices();
 	void findEdges();
 	bool isEdgesInTheList(int id1, int id2);
+	void printGraph();
+	void createPath(int startX, int startY, int goalX, int goalY);
+	void printPath();
+	void createRoadMap();
 
-	std::vector<int> vertices;
-	std::vector<std::vector<int>> edges;
 
 private:
 	Image* map;
 	Image* potentialFieldMap;
 	Image* collisionDetectionMap;
 	Image* gvdMap;
+	Image* pathMap;
 	Image* siftedMap;
+	std::vector<int> vertices;
+	std::vector<std::vector<int>> edges;
+	std::vector<std::vector<int>> graph;
+	std::stack<std::vector<int>> path;
 
 	bool isNextTo4Way(Image* map, int posX, int posY, int target);
 
@@ -39,6 +48,12 @@ private:
 	
 	bool isNextTo8Way(Image* map, int posX, int posY, int target);
 	bool isPartOfGVD(Image* map, int posX, int posY);
+
+	void createGraph(int start);
+	bool isPathClear(int startX, int startY, int goalX, int goalY);
+	int findClosestValidVertex(int posX, int posY);
+	int findIndexOfVertex(int vertex);
+	void drawStraightLine(int x0, int y0, int x1, int y1);
 
 
 };
