@@ -17,7 +17,6 @@ MyMap::MyMap(Image * inputMap)
 	pathMap = nullptr;
 }
 
-
 MyMap::~MyMap()
 {
 }
@@ -60,7 +59,7 @@ void MyMap::createBrushfireCollisionDetection()
 
 	for (int i = 0; i < min; i++) { // Times we need to keep brushfiring to be sure we get all collisions
 		std::cout << i << std::endl;
-		for (int color = 0; color < 31; color+=5) { // Going through all the shades from white to black
+		for (int color = 0; color < 36; color+=5) { // Going through all the shades from white to black
 			for (int width = 0; width < collisionDetectionMap->getWidth(); width++) { // Iterating through X
 				for (int height = 0; height < collisionDetectionMap->getHeight(); height++) { // Iterating through Y
 					if (collisionDetectionMap->getPixelValuei(width, height, 0) == 255 ) { // If the pixel is white
@@ -140,8 +139,6 @@ void MyMap::siftGVD()
 	siftedMap->saveAsPGM("siftedMap.pgm");
 
 }
-
-
 
 void MyMap::createGVD()
 {
