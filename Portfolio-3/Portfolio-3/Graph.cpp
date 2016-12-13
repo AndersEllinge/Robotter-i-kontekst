@@ -39,7 +39,7 @@ void Graph::addEdge(Coordinate fromVertex, Coordinate toVertex, int cost)
 std::stack<Coordinate> Graph::getPath(Coordinate start, Coordinate goal)
 {
 
-	// 1) create dijkstra table
+	// 1) Create dijkstra table
 	// Init for dijkstra
 	std::vector<std::vector<int>> dijkstraGraph;
 	dijkstraGraph.resize(vertices.size());
@@ -80,12 +80,20 @@ std::stack<Coordinate> Graph::getPath(Coordinate start, Coordinate goal)
 	}
 
 
-	// 2) find path from dijkstra table
+	// 2) Find path from dijkstra table
+	std::stack<Coordinate> path;
+	int vertexForPath = findIndexForVertex(goal);
 
+	path.push(goal); // Push goal coordinate onto path
 
+	while (dijkstraGraph[vertexForPath][1] != 0) {
+		path.push(vertices[vertexForPath].coordinate); // Push vertex coordinate onto path
+		vertexForPath = dijkstraGraph[vertexForPath][2]; // Set vertex to next vertex in path
+	}
 
+	path.push(vertices[vertexForPath].coordinate); // Push starting vertex coordinate
 
-	return std::stack<Coordinate>();
+	return path;
 }
 
 int Graph::findIndexForVertex(Coordinate coordinate)
