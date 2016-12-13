@@ -14,6 +14,7 @@ Map::Map(Image* inputMapObstacle, Image* inputMapItems, int basex, int basey)
 
 void Map::searchMap()
 {
+	lineSweep();
 	createCells();
 }
 
@@ -29,35 +30,30 @@ Map::~Map()
 
 void Map::createCells()
 {
-	lineSweep();
-	int lort =0;
-	if (cells.empty())
+	if (cells.empty()) // vector is empty when creating the first cell
 	{
 		for (int x1 = 0; x1 < obstacleMap->getWidth(); x1++) { // x coordinate
 			for (int y1 = 0; y1 < obstacleMap->getHeight(); y1++) { // y coordinate 
-				if (criticalPointMap->getPixelValuei(x1, y1, 255) || criticalPointMap->getPixelValuei(x1, y1, 100)){ // check if we find a white pixel or line sweep
+				if (criticalPointMap->getPixelValuei(x1, y1, 255)){ // check if we find a white pixel or line sweep
 					for (size_t x2 = x1; x2 < obstacleMap->getWidth(); x2++){
 						if (criticalPointMap->getPixelValuei(x2, y1, 0) || criticalPointMap->getPixelValuei(x2, y1, 100)){ // check if we hit obstacle or line sweep
-							for (size_t y2 = y1; y2 < obstacleMap->getHeight(); y2++){
-								if (criticalPointMap->getPixelValuei(x2, y2, 0) || criticalPointMap->getPixelValuei(x2, y2, 100)){
-									lort++;
-									std::cout << lort << std::endl;
-									cells.push_back(Cell(Coordinate(x1, y1), Coordinate(x2, y2)));
+							for (size_t y2 = y1; y2 < obstacleMap->getHeight(); y2++){									   // If we hit an obstacle or line sweep, we have the first coordinate to define a cell
+								if (criticalPointMap->getPixelValuei(x2, y2, 0)){ // check if we hit obstacle or line sweep
+									cells.push_back(Cell(Coordinate(x1, y1), Coordinate(x2, y2)));								   // If we hit an obstacle or line sweep, we have the second coordinate to define a cell
 									break;
 								}
 							}
-							if (!cells.empty())
+							if (!cells.empty()) // break if cell has been created
 								break;
 						}
 					}
-					if (!cells.empty())
+					if (!cells.empty()) // break if cell has been created
 						break;
 				}
 			}
-			if (!cells.empty())
+			if (!cells.empty()) // break if cell has been created
 				break;
 		}
-		
 	}
 
 
