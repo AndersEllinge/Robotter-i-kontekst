@@ -3,12 +3,13 @@
 #include "PPMLoader.hpp"
 #include "Graph.h"
 
+
 using namespace rw::sensor;
 using namespace rw::loaders;
 
 struct Cells
 {
-	Coordinate startPoint()
+	Coordinate cellCorners[2];
 };
 
 class Map
