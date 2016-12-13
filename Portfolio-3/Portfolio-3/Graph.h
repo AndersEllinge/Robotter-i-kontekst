@@ -1,9 +1,12 @@
 #pragma once
 #include <vector>
 #include <stack>
+#define unknown 999999
 
 struct Coordinate
 {
+	Coordinate() {};
+
 	Coordinate(int ix, int iy) {
 		x = ix;
 		y = iy;
@@ -13,7 +16,7 @@ struct Coordinate
 	int y;
 };
 
-struct AdjecencyObject
+struct Edge
 {
 	int pointer;
 	int cost;
@@ -21,9 +24,25 @@ struct AdjecencyObject
 
 struct Vertex
 {
+	Vertex(Coordinate iCoordinate) {
+		cellKey = unknown;
+		coordinate = iCoordinate;
+		adjecencyList.clear();
+	}
+
+	Vertex(Coordinate iCoodinate, int iCellKey) {
+		cellKey = iCellKey;
+		coordinate = iCoodinate;
+		adjecencyList.clear();
+	}
+
+	Vertex(Coordinate iCoodinate, int iCellKey, std::vector<Edge> iAdjecencyList) {
+
+	}
+
 	int cellKey;
 	Coordinate coordinate;
-	std::vector<AdjecencyObject> adjecencyList;
+	std::vector<Edge> adjecencyList;
 };
 
 class Graph
@@ -33,9 +52,9 @@ public:
 	~Graph();
 
 	void addVertex(Coordinate coordinate);
-	void addVertex(Coordinate coordinate, std::vector<AdjecencyObject> adjecencyList);
+	void addVertex(Coordinate coordinate, std::vector<Edge> adjecencyList);
 	void addVertex(Coordinate coordinate, int cellKey);
-	void addVertex(Coordinate coordinate, int cellKey, std::vector<AdjecencyObject> adjecencyList);
+	void addVertex(Coordinate coordinate, int cellKey, std::vector<Edge> adjecencyList);
 	void addEdge();
 	std::stack<Coordinate> getPath();
 
