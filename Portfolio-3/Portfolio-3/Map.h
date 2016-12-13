@@ -21,6 +21,8 @@ class Map
 public:
 	Map(Image* inputMapObstacle, Image* inputMapItems, int basex, int basey);
 	
+	void searchMap();
+
 	void drawPathTaken();
 	
 	~Map();
@@ -31,10 +33,14 @@ private:
 	Image* itemMap;
 	Image* pathTakenMap;
 	Image* cellDecompositionMap;
+	Image* criticalPointMap;
 	std::vector<Cell> cells;
 	Graph roadMap;
 
+	void createCells();
 	void lineSweep();
+	bool criticalPoint(Image* map, int posX, int posY, int target);
+	void drawLineSweep(int posX, int posY, int scenario);
 	void exitEntryPoints();
 
 };
