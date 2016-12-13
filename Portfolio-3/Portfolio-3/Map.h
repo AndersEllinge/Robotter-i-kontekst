@@ -7,11 +7,11 @@
 using namespace rw::sensor;
 using namespace rw::loaders;
 
-struct Cells
+struct Cell
 {
-	Cells(Coordinate(int topLeftY, int topleftY), Coordinate( int bottomRightX, int bottomRightY) {
-		cellCorners[0] = ;
-		cellCorners[1] = ;
+	Cell(Coordinate topLeft, Coordinate bottomRight) {
+		cellCorners[0] = topLeft;
+		cellCorners[1] = bottomRight;
 	}
 	Coordinate cellCorners[2];
 };
@@ -23,7 +23,6 @@ public:
 	
 	void drawPathTaken();
 	
-	
 	~Map();
 
 
@@ -32,7 +31,7 @@ private:
 	Image* itemMap;
 	Image* pathTakenMap;
 	Image* cellDecompositionMap;
-	std::vector<Cells*> cells;
+	std::vector<Cell> cells;
 	Graph roadMap;
 
 	void lineSweep();
