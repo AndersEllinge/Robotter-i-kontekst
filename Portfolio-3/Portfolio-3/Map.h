@@ -15,7 +15,7 @@ struct Cells
 class Map
 {
 public:
-	Map(Image* inputMapObstacle, Image* inputMapItems);
+	Map(Image* inputMapObstacle, Image* inputMapItems, int basex, int basey);
 	
 	void drawPathTaken();
 	
