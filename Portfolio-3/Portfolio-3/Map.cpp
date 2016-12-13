@@ -30,34 +30,25 @@ Map::~Map()
 
 void Map::createCells()
 {
-	if (cells.empty()) // vector is empty when creating the first cell
+	cellDecompositionMap = criticalPointMap->copyFlip(0, 0);
+
+	//findFirstCell();
+	
+	
+
+	bool moreCells = 1;
+	int color = 20;
+	while (moreCells)
 	{
-		for (int x1 = 0; x1 < obstacleMap->getWidth(); x1++) { // x coordinate
-			for (int y1 = 0; y1 < obstacleMap->getHeight(); y1++) { // y coordinate 
-				if (criticalPointMap->getPixelValuei(x1, y1, 255)){ // check if we find a white pixel or line sweep
-					for (size_t x2 = x1; x2 < obstacleMap->getWidth(); x2++){
-						if (criticalPointMap->getPixelValuei(x2, y1, 0) || criticalPointMap->getPixelValuei(x2, y1, 100)){ // check if we hit obstacle or line sweep
-							for (size_t y2 = y1; y2 < obstacleMap->getHeight(); y2++){									   // If we hit an obstacle or line sweep, we have the first coordinate to define a cell
-								if (criticalPointMap->getPixelValuei(x2, y2, 0)){ // check if we hit obstacle or line sweep
-									cells.push_back(Cell(Coordinate(x1, y1), Coordinate(x2, y2)));								   // If we hit an obstacle or line sweep, we have the second coordinate to define a cell
-									break;
-								}
-							}
-							if (!cells.empty()) // break if cell has been created
-								break;
-						}
-					}
-					if (!cells.empty()) // break if cell has been created
-						break;
-				}
-			}
-			if (!cells.empty()) // break if cell has been created
-				break;
-		}
+		moreCells = 0;
+		findCells();
+		drawCell(cells[cells.size()-1].cellCorners[0], cells[cells.size()-1].cellCorners[1], color);
+		moreCells = isMoreCells();
+		color = color + 20;
+
 	}
 
-
-
+	cellDecompositionMap->saveAsPGM("cellDecompositionMap.pgm"); // Save output
 }
 
 void Map::lineSweep()
@@ -68,7 +59,7 @@ void Map::lineSweep()
 		for (int y = 0; y < obstacleMap->getHeight(); y++) { // y coordinate 
 			if (criticalPoint(obstacleMap, x, y, 255)) // check if critical point
 			{
-				criticalPointMap->setPixel8U(x, y, 100);
+				//criticalPointMap->setPixel8U(x, y, 100);
 			}
 		}
 	}
@@ -113,7 +104,7 @@ void Map::drawLineSweep(int posX, int posY, int scenario)
 			{
 				break;
 			}
-			criticalPointMap->setPixel8U(posX, i, 100);
+			criticalPointMap->setPixel8U(posX, i, 123);
 		}
 	}
 	if (scenario == 2) // scenario 2
@@ -124,11 +115,65 @@ void Map::drawLineSweep(int posX, int posY, int scenario)
 			{
 				break;
 			}
-			criticalPointMap->setPixel8U(posX, i, 100);
+			criticalPointMap->setPixel8U(posX, i, 123);
 		}
 	}	
 }
 
 void Map::exitEntryPoints()
 {
+}
+
+void Map::drawCell(Coordinate topLeft, Coordinate bottomRight, int color)
+{
+	std::cout << "topleft " << topLeft.x << " " << topLeft.y <<std::endl;
+	std::cout << "bottomright " << bottomRight.x << " " << bottomRight.y << std::endl;
+
+	for (size_t i = topLeft.x; i <= bottomRight.x ; i++)
+	{
+		for (size_t k = topLeft.y; k <= bottomRight.y; k++)
+		{
+			cellDecompositionMap->setPixel8U(i, k, color);
+		}
+	}
+}
+
+void Map::findCells()
+{
+	for (int x1 = 0; x1 < obstacleMap->getWidth(); x1++) { // x coordinate
+		for (int y1 = 0; y1 < obstacleMap->getHeight(); y1++) { // y coordinate 
+			if (cellDecompositionMap->getPixelValuei(x1, y1, 0) == 255 || cellDecompositionMap->getPixelValuei(x1, y1, 0) == 123) { // check if we find a white pixel or line sweep
+				if (cellDecompositionMap->getPixelValuei(x1, y1, 0) == 123)
+					cellDecompositionMap->setPixel8U(x1, y1, 255);
+				for (size_t x2 = x1; x2 < obstacleMap->getWidth(); x2++) {
+					if (cellDecompositionMap->getPixelValuei(x2, y1, 0) == 0 || cellDecompositionMap->getPixelValuei(x2, y1, 0) == 123) { // check if we hit obstacle or line sweep
+						if (cellDecompositionMap->getPixelValuei(x2, y1, 0) != 123)
+							x2--;
+						for (size_t y2 = y1; y2 < obstacleMap->getHeight(); y2++) {					 // If we hit an obstacle or line sweep, we have the first coordinate to define a cell
+							if (cellDecompositionMap->getPixelValuei(x2, y2, 0) == 0) {				// check if we hit obstacle or line sweep
+								//if (cellDecompositionMap->getPixelValuei(x2, y2, 0) != 123)
+									y2--;
+								cells.push_back(Cell(Coordinate(x1, y1), Coordinate(x2, y2)));				// If we hit an obstacle or line sweep, we have the second coordinate to define a cell
+								return;
+							}
+						}
+					}
+				}
+			}
+		}
+	}
+}
+
+bool Map::isMoreCells()
+{
+	for (size_t i = 0; i <= cellDecompositionMap->getWidth() - 1; i++)
+	{
+		for (size_t k = 0; k <= cellDecompositionMap->getHeight() - 1; k++)
+		{
+			if (cellDecompositionMap->getPixelValuei(i, k, 0) == 255) {
+				return 1;
+			}
+		}
+	}
+	return 0;
 }
