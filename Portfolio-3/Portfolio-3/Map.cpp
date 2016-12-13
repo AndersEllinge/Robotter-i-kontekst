@@ -122,11 +122,9 @@ void Map::drawLineSweep(int posX, int posY, int scenario)
 	if (scenario == 1) // scenario 1
 	{
 		int lineCount = 0;
-		for (size_t i = posY-1; i > 0; i--)
-		{
+		for (size_t i = posY-1; i > 0; i--) {
 			lineCount++;
-			if (criticalPointMap->getPixelValuei(posX, i, 0) == 0)
-			{
+			if (criticalPointMap->getPixelValuei(posX, i, 0) == 0) {
 				criticalPointMap->setPixel8U(posX - 1, posY - 1 - lineCount / 2, 195);
 				criticalPointMap->setPixel8U(posX + 1, posY - 1 - lineCount / 2, 195);
 				roadMap.addVertex(Coordinate(posX - 1, posY - 1));
@@ -141,11 +139,9 @@ void Map::drawLineSweep(int posX, int posY, int scenario)
 	if (scenario == 2) // scenario 2
 	{
 		int lineCount = 0;
-		for (size_t i = posY + 1; i < criticalPointMap->getHeight() - 1; i++)
-		{
+		for (size_t i = posY + 1; i < criticalPointMap->getHeight() - 1; i++) {
 			lineCount++;
-			if (criticalPointMap->getPixelValuei(posX, i, 0) == 0)
-			{
+			if (criticalPointMap->getPixelValuei(posX, i, 0) == 0) {
 				criticalPointMap->setPixel8U(posX - 1, posY + 1 + lineCount / 2, 195);
 				criticalPointMap->setPixel8U(posX + 1, posY + 1 + lineCount / 2, 195);
 				roadMap.addVertex(Coordinate(posX - 1, posY + 1));
@@ -162,16 +158,12 @@ void Map::drawLineSweep(int posX, int posY, int scenario)
 void Map::exitEntryPoints()
 {
 	int lineCount = 0;
-	for (size_t x1 = 0; x1 <= criticalPointMap->getWidth() - 1; x1++)
-	{
-		for (size_t y1 = 0; y1 <= criticalPointMap->getHeight() - 1; y1++)
-		{
+	for (size_t x1 = 0; x1 <= criticalPointMap->getWidth() - 1; x1++) {
+		for (size_t y1 = 0; y1 <= criticalPointMap->getHeight() - 1; y1++) {
 			if (criticalPointMap->getPixelValuei(x1, y1, 0) == 123) {
-				for (size_t y2 = y1 ; y2 < criticalPointMap->getHeight() - 1; y2++)
-				{
+				for (size_t y2 = y1 ; y2 < criticalPointMap->getHeight() - 1; y2++) {
 					lineCount++;
-					if (criticalPointMap->getPixelValuei(x1, y2, 0) == 0)
-					{
+					if (criticalPointMap->getPixelValuei(x1, y2, 0) == 0) {
 						std::cout << lineCount << std::endl;
 						criticalPointMap->setPixel8U(x1 - 1, y1 + lineCount/2, 195);
 						criticalPointMap->setPixel8U(x1 + 1, y1 + lineCount/2, 195);
