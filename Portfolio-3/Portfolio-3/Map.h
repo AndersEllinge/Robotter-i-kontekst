@@ -9,9 +9,9 @@ using namespace rw::loaders;
 
 struct Cells
 {
-	Cells(Coordinate topLeft, Coordinate bottomRight) {
-		cellCorners[0] = topLeft;
-		cellCorners[1] = bottomRight;
+	Cells(Coordinate(int topLeftY, int topleftY), Coordinate( int bottomRightX, int bottomRightY) {
+		cellCorners[0] = ;
+		cellCorners[1] = ;
 	}
 	Coordinate cellCorners[2];
 };
