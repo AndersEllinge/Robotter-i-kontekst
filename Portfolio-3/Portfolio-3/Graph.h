@@ -27,13 +27,14 @@ public:
 	Graph();
 	~Graph();
 
-	void createGraph();
 	void addVertex();
+	void addEdge();
 	std::stack<Coordinate> getPath();
 
 private:
 	std::vector<Vertex> vertices;
-
+	std::vector<std::vector<int>> createDijkstraGraph();
+	std::stack<Coordinate> findPathFromDijkstraGraph();
 
 };
 
