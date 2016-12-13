@@ -27,7 +27,10 @@ public:
 	Graph();
 	~Graph();
 
-	void addVertex();
+	void addVertex(Coordinate coordinate);
+	void addVertex(Coordinate coordinate, std::vector<AdjecencyObject> adjecencyList);
+	void addVertex(Coordinate coordinate, int cellKey);
+	void addVertex(Coordinate coordinate, int cellKey, std::vector<AdjecencyObject> adjecencyList);
 	void addEdge();
 	std::stack<Coordinate> getPath();
 
