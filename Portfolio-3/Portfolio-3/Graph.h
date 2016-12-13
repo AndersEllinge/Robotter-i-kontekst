@@ -30,6 +30,12 @@ struct Vertex
 		adjecencyList.clear();
 	}
 
+	Vertex(Coordinate iCoodinate, std::vector<Edge> iAdjecencyList) {
+		cellKey = unknown;
+		coordinate = iCoodinate;
+		adjecencyList = iAdjecencyList;
+	}
+
 	Vertex(Coordinate iCoodinate, int iCellKey) {
 		cellKey = iCellKey;
 		coordinate = iCoodinate;
@@ -37,7 +43,9 @@ struct Vertex
 	}
 
 	Vertex(Coordinate iCoodinate, int iCellKey, std::vector<Edge> iAdjecencyList) {
-
+		cellKey = iCellKey;
+		coordinate = iCoodinate;
+		adjecencyList = iAdjecencyList;
 	}
 
 	int cellKey;
