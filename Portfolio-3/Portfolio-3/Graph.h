@@ -81,8 +81,6 @@ public:
 
 private:
 	std::vector<Vertex> vertices;
-	std::vector<std::vector<int>> createDijkstraGraph();
-	std::stack<Coordinate> findPathFromDijkstraGraph();
 
 	int findIndexForVertex(Coordinate coordinate);
 
