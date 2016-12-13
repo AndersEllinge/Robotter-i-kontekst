@@ -23,7 +23,6 @@ void Map::drawPathTaken()
 	
 }
 
-
 Map::~Map()
 {
 }
@@ -55,7 +54,7 @@ void Map::createCells()
 		moreSweepLine = isMoreSweepLine();
 	}*/
 
-	criticalPointMap->saveAsPGM("criticalPointMap.pgm"); // Save output
+	
 	cellDecompositionMap->saveAsPGM("cellDecompositionMap.pgm"); // Save output
 }
 
@@ -67,10 +66,11 @@ void Map::lineSweep()
 		for (int y = 0; y < obstacleMap->getHeight(); y++) { // y coordinate 
 			if (criticalPoint(obstacleMap, x, y, 255)) // check if critical point
 			{
-				//criticalPointMap->setPixel8U(x, y, 100);
+				// criticalPointMap->setPixel8U(x, y, 100);
 			}
 		}
 	}
+	criticalPointMap->saveAsPGM("criticalPointMap.pgm"); // Save output
 }
 
 bool Map::criticalPoint(Image* map, int posX, int posY, int target)
@@ -95,7 +95,7 @@ bool Map::criticalPoint(Image* map, int posX, int posY, int target)
 			return 1;
 		}
 
-		if (map->getPixelValuei(posX + 1, posY, 0) == target && map->getPixelValuei(posX, posY - 1, 0) == target) {// right and top is white - scenario 1
+		if (map->getPixelValuei(posX + 1, posY, 0) == target && map->getPixelValuei(posX, posY - 1, 0) == target) { // right and top is white - scenario 1
 			if (criticalPointMap->getPixelValuei(posX, posY-1, 0) == 123)
 			{
 				return 1;
@@ -124,9 +124,9 @@ void Map::drawLineSweep(int posX, int posY, int scenario)
 		int lineCount = 0;
 		for (size_t i = posY-1; i > 0; i--) {
 			lineCount++;
-			if (criticalPointMap->getPixelValuei(posX, i, 0) == 0) {
-				criticalPointMap->setPixel8U(posX - 1, posY - 1 - lineCount / 2, 195);
-				criticalPointMap->setPixel8U(posX + 1, posY - 1 - lineCount / 2, 195);
+			if (criticalPointMap->getPixelValuei(posX, i, 0) == 0) { // Stop at black pixel
+				criticalPointMap->setPixel8U(posX - 1, posY - 1 - lineCount / 2, 195); // draw left entry point of the linesweep
+				criticalPointMap->setPixel8U(posX + 1, posY - 1 - lineCount / 2, 195); // draw right entry point of the linesweep
 				roadMap.addVertex(Coordinate(posX - 1, posY - 1));
 				roadMap.addVertex(Coordinate(posX + 1, posY - 1));
 				roadMap.addEdge(Coordinate(posX - 1, posY - 1), Coordinate(posX + 1, posY - 1), 2);
@@ -201,8 +201,8 @@ void Map::findCells()
 						if (cellDecompositionMap->getPixelValuei(x2, y1, 0) != 123)
 							x2--;
 						for (size_t y2 = y1; y2 < obstacleMap->getHeight(); y2++) {					 // If we hit an obstacle or line sweep, we have the first coordinate to define a cell
-							if (cellDecompositionMap->getPixelValuei(x2, y2, 0) == 0) {				// check if we hit obstacle or line sweep
-								//if (cellDecompositionMap->getPixelValuei(x2, y2, 0) != 123)
+							if (cellDecompositionMap->getPixelValuei(x2, y2, 0) == 0) {				 // check if we hit obstacle or line sweep
+																									 // if (cellDecompositionMap->getPixelValuei(x2, y2, 0) != 123)
 									y2--;
 								cells.push_back(Cell(Coordinate(x1, y1), Coordinate(x2, y2)));				// If we hit an obstacle or line sweep, we have the second coordinate to define a cell
 								return;
