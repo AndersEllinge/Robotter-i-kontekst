@@ -45,9 +45,17 @@ void Map::createCells()
 		drawCell(cells[cells.size()-1].cellCorners[0], cells[cells.size()-1].cellCorners[1], color);
 		moreCells = isMoreCells();
 		color = color + 20;
-
 	}
 
+	/*bool moreSweepLine = 1;
+	while (moreSweepLine)
+	{
+		moreSweepLine = 0;
+		exitEntryPoints();
+		moreSweepLine = isMoreSweepLine();
+	}*/
+
+	criticalPointMap->saveAsPGM("criticalPointMap.pgm"); // Save output
 	cellDecompositionMap->saveAsPGM("cellDecompositionMap.pgm"); // Save output
 }
 
@@ -63,7 +71,6 @@ void Map::lineSweep()
 			}
 		}
 	}
-	criticalPointMap->saveAsPGM("criticalPointMap.pgm"); // Save output
 }
 
 bool Map::criticalPoint(Image* map, int posX, int posY, int target)
@@ -71,21 +78,37 @@ bool Map::criticalPoint(Image* map, int posX, int posY, int target)
 	if (posX != 0 && posX != (map->getWidth() - 1) && posY != 0 && posY != (map->getHeight() - 1) && map->getPixelValuei(posX, posY, 0) == 0) // test for borders if pixel is black
 	{
 		if (map->getPixelValuei(posX - 1, posY, 0) == target && map->getPixelValuei(posX, posY - 1, 0) == target) { // left and top is white - scenario 1
+			if (criticalPointMap->getPixelValuei(posX, posY-1, 0) == 123)
+			{
+				return 1;
+			}
 			drawLineSweep(posX, posY, 1);
 			return 1;
 		}
 
 		if (map->getPixelValuei(posX - 1, posY, 0) == target && map->getPixelValuei(posX, posY + 1, 0) == target) { // left and bottom is white - scenario 2
+			if (criticalPointMap->getPixelValuei(posX, posY+1, 0) == 123)
+			{
+				return 1;
+			}
 			drawLineSweep(posX, posY, 2);
 			return 1;
 		}
 
 		if (map->getPixelValuei(posX + 1, posY, 0) == target && map->getPixelValuei(posX, posY - 1, 0) == target) {// right and top is white - scenario 1
+			if (criticalPointMap->getPixelValuei(posX, posY-1, 0) == 123)
+			{
+				return 1;
+			}
 			drawLineSweep(posX, posY, 1);
 			return 1;
 		}
 
 		if (map->getPixelValuei(posX + 1, posY, 0) == target && map->getPixelValuei(posX, posY + 1, 0) == target) { // right and bottom is white - scenario 2
+			if (criticalPointMap->getPixelValuei(posX, posY+1, 0) == 123)
+			{
+				return 1;
+			}
 			drawLineSweep(posX, posY, 2);
 			return 1;
 		}
@@ -98,10 +121,18 @@ void Map::drawLineSweep(int posX, int posY, int scenario)
 {
 	if (scenario == 1) // scenario 1
 	{
+		int lineCount = 0;
 		for (size_t i = posY-1; i > 0; i--)
 		{
+			lineCount++;
 			if (criticalPointMap->getPixelValuei(posX, i, 0) == 0)
 			{
+				criticalPointMap->setPixel8U(posX - 1, posY - 1 - lineCount / 2, 195);
+				criticalPointMap->setPixel8U(posX + 1, posY - 1 - lineCount / 2, 195);
+				roadMap.addVertex(Coordinate(posX - 1, posY - 1));
+				roadMap.addVertex(Coordinate(posX + 1, posY - 1));
+				roadMap.addEdge(Coordinate(posX - 1, posY - 1), Coordinate(posX + 1, posY - 1), 2);
+				roadMap.addEdge(Coordinate(posX + 1, posY - 1), Coordinate(posX - 1, posY - 1), 2);
 				break;
 			}
 			criticalPointMap->setPixel8U(posX, i, 123);
@@ -109,10 +140,18 @@ void Map::drawLineSweep(int posX, int posY, int scenario)
 	}
 	if (scenario == 2) // scenario 2
 	{
+		int lineCount = 0;
 		for (size_t i = posY + 1; i < criticalPointMap->getHeight() - 1; i++)
 		{
+			lineCount++;
 			if (criticalPointMap->getPixelValuei(posX, i, 0) == 0)
 			{
+				criticalPointMap->setPixel8U(posX - 1, posY + 1 + lineCount / 2, 195);
+				criticalPointMap->setPixel8U(posX + 1, posY + 1 + lineCount / 2, 195);
+				roadMap.addVertex(Coordinate(posX - 1, posY + 1));
+				roadMap.addVertex(Coordinate(posX + 1, posY + 1));
+				roadMap.addEdge(Coordinate(posX - 1, posY + 1), Coordinate(posX + 1, posY + 1), 2);
+				roadMap.addEdge(Coordinate(posX + 1, posY + 1), Coordinate(posX - 1, posY + 1), 2);
 				break;
 			}
 			criticalPointMap->setPixel8U(posX, i, 123);
@@ -122,6 +161,26 @@ void Map::drawLineSweep(int posX, int posY, int scenario)
 
 void Map::exitEntryPoints()
 {
+	int lineCount = 0;
+	for (size_t x1 = 0; x1 <= criticalPointMap->getWidth() - 1; x1++)
+	{
+		for (size_t y1 = 0; y1 <= criticalPointMap->getHeight() - 1; y1++)
+		{
+			if (criticalPointMap->getPixelValuei(x1, y1, 0) == 123) {
+				for (size_t y2 = y1 ; y2 < criticalPointMap->getHeight() - 1; y2++)
+				{
+					lineCount++;
+					if (criticalPointMap->getPixelValuei(x1, y2, 0) == 0)
+					{
+						std::cout << lineCount << std::endl;
+						criticalPointMap->setPixel8U(x1 - 1, y1 + lineCount/2, 195);
+						criticalPointMap->setPixel8U(x1 + 1, y1 + lineCount/2, 195);
+						return;
+					}
+				}
+			}
+		}
+	}
 }
 
 void Map::drawCell(Coordinate topLeft, Coordinate bottomRight, int color)
@@ -171,6 +230,20 @@ bool Map::isMoreCells()
 		for (size_t k = 0; k <= cellDecompositionMap->getHeight() - 1; k++)
 		{
 			if (cellDecompositionMap->getPixelValuei(i, k, 0) == 255) {
+				return 1;
+			}
+		}
+	}
+	return 0;
+}
+
+bool Map::isMoreSweepLine()
+{
+	for (size_t i = 0; i <= criticalPointMap->getWidth() - 1; i++)
+	{
+		for (size_t k = 0; k <= criticalPointMap->getHeight() - 1; k++)
+		{
+			if (criticalPointMap->getPixelValuei(i, k, 0) == 123) {
 				return 1;
 			}
 		}

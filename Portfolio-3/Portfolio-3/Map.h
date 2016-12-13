@@ -45,5 +45,6 @@ private:
 	void drawCell(Coordinate topLeft, Coordinate bottomRight, int color);
 	void findCells();
 	bool isMoreCells();
+	bool isMoreSweepLine();
 };
 
