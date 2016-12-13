@@ -4,13 +4,18 @@
 
 struct Coordinate
 {
+	Coordinate(int ix, int iy) {
+		x = ix;
+		y = iy;
+	}
+
 	int x;
 	int y;
 };
 
 struct AdjecencyObject
 {
-	Vertex* pointer;
+	int pointer;
 	int cost;
 };
 
