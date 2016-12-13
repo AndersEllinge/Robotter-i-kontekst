@@ -14,7 +14,8 @@ Map::Map(Image* inputMapObstacle, Image* inputMapItems, int basex, int basey)
 
 void Map::searchMap()
 {
-	lineSweep();
+	//lineSweep();
+	lineSweep2();
 	createCells();
 }
 
@@ -45,15 +46,6 @@ void Map::createCells()
 		moreCells = isMoreCells();
 		color = color + 20;
 	}
-
-	/*bool moreSweepLine = 1;
-	while (moreSweepLine)
-	{
-		moreSweepLine = 0;
-		exitEntryPoints();
-		moreSweepLine = isMoreSweepLine();
-	}*/
-
 	
 	cellDecompositionMap->saveAsPGM("cellDecompositionMap.pgm"); // Save output
 }
@@ -155,26 +147,6 @@ void Map::drawLineSweep(int posX, int posY, int scenario)
 	}	
 }
 
-void Map::exitEntryPoints()
-{
-	int lineCount = 0;
-	for (size_t x1 = 0; x1 <= criticalPointMap->getWidth() - 1; x1++) {
-		for (size_t y1 = 0; y1 <= criticalPointMap->getHeight() - 1; y1++) {
-			if (criticalPointMap->getPixelValuei(x1, y1, 0) == 123) {
-				for (size_t y2 = y1 ; y2 < criticalPointMap->getHeight() - 1; y2++) {
-					lineCount++;
-					if (criticalPointMap->getPixelValuei(x1, y2, 0) == 0) {
-						std::cout << lineCount << std::endl;
-						criticalPointMap->setPixel8U(x1 - 1, y1 + lineCount/2, 195);
-						criticalPointMap->setPixel8U(x1 + 1, y1 + lineCount/2, 195);
-						return;
-					}
-				}
-			}
-		}
-	}
-}
-
 void Map::drawCell(Coordinate topLeft, Coordinate bottomRight, int color)
 {
 	std::cout << "topleft " << topLeft.x << " " << topLeft.y <<std::endl;
@@ -229,16 +201,79 @@ bool Map::isMoreCells()
 	return 0;
 }
 
-bool Map::isMoreSweepLine()
+void Map::lineSweep2()
 {
-	for (size_t i = 0; i <= criticalPointMap->getWidth() - 1; i++)
-	{
-		for (size_t k = 0; k <= criticalPointMap->getHeight() - 1; k++)
-		{
-			if (criticalPointMap->getPixelValuei(i, k, 0) == 123) {
-				return 1;
+	criticalPointMap = obstacleMap->copyFlip(0, 0);
+
+	for (int x = 0; x < obstacleMap->getWidth(); x++) { // x coordinate
+		for (int y = 0; y < obstacleMap->getHeight(); y++) { // y coordinate 
+
+			// 1) Identify critical point
+			if (isCriticalPoint(x, y)) {
+				
+				int lineCounter = 0;
+				int yIterator = y;
+
+				while (criticalPointMap->getPixelValuei(x, yIterator - 1, 0) == 255) { // Draws line up
+					yIterator--;
+					criticalPointMap->setPixel8U(x, yIterator, 123); // 123 is color identifier for sweep line
+					lineCounter++;
+					std::cout << lineCounter << std::endl;
+				}
+
+				// Add entry vertices and edge
+				if (lineCounter) {
+					criticalPointMap->setPixel8U(x - 1, y - lineCounter / 2, 195); // draw left entry point of the linesweep
+					criticalPointMap->setPixel8U(x + 1, y - lineCounter / 2, 195); // draw right entry point of the linesweep
+					// NOT DONE!
+				}
+				
+
+				lineCounter = 0;
+				yIterator = y;
+
+				while (criticalPointMap->getPixelValuei(x, yIterator + 1, 0) == 255) { // Draws line down
+					yIterator++;
+					criticalPointMap->setPixel8U(x, yIterator, 123); // 123 is color identifier for sweep line
+					lineCounter++;
+					std::cout << lineCounter << std::endl;
+				}
+
+				// Add entry vertices and edge
+				if (lineCounter) {
+					criticalPointMap->setPixel8U(x - 1, y + lineCounter / 2, 195); // draw left entry point of the linesweep
+					criticalPointMap->setPixel8U(x + 1, y + lineCounter / 2, 195); // draw right entry point of the linesweep
+					// NOT DONE!
+				}
+
+
 			}
 		}
 	}
+	
+
+
+
+	criticalPointMap->saveAsPGM("criticalPointMap.pgm"); // Save output
+}
+
+bool Map::isCriticalPoint(int posX, int posY)
+{
+	if (posX != 0 && posX != (obstacleMap->getWidth() - 1) && posY != 0 && posY != (obstacleMap->getHeight() - 1) && obstacleMap->getPixelValuei(posX, posY, 0) == 0) { // test for borders and if pixel is black
+
+		if (obstacleMap->getPixelValuei(posX - 1, posY, 0) == 255 && obstacleMap->getPixelValuei(posX, posY - 1, 0) == 255) // left and top is white - scenario 1
+			return 1;
+
+		if (obstacleMap->getPixelValuei(posX - 1, posY, 0) == 255 && obstacleMap->getPixelValuei(posX, posY + 1, 0) == 255) // left and bottom is white - scenario 2
+			return 1;
+
+		if (obstacleMap->getPixelValuei(posX + 1, posY, 0) == 255 && obstacleMap->getPixelValuei(posX, posY - 1, 0) == 255) // right and top is white - scenario 1
+			return 1;
+
+		if (obstacleMap->getPixelValuei(posX + 1, posY, 0) == 255 && obstacleMap->getPixelValuei(posX, posY + 1, 0) == 255) // right and bottom is white - scenario 2
+			return 1;
+
+	}
+
 	return 0;
 }

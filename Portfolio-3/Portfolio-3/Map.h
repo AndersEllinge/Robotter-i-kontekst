@@ -41,10 +41,12 @@ private:
 	void lineSweep();
 	bool criticalPoint(Image* map, int posX, int posY, int target);
 	void drawLineSweep(int posX, int posY, int scenario);
-	void exitEntryPoints();
 	void drawCell(Coordinate topLeft, Coordinate bottomRight, int color);
 	void findCells();
 	bool isMoreCells();
-	bool isMoreSweepLine();
+	void lineSweep2();
+
+	bool isCriticalPoint(int x, int y);
+
 };
 
