@@ -84,7 +84,7 @@ public:
 
 	void updateCellKey(int index, int iCellKey);
 
-	std::stack<Coordinate> getPath(Coordinate start, Coordinate goal);
+	std::stack<Coordinate> getPath(int start, int goal);
 
 	void printVertices();
 	void printEdges();

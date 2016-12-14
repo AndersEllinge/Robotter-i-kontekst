@@ -10,15 +10,29 @@ Map::Map(Image* inputMapObstacle, Image* inputMapItems, int basex, int basey)
 	cellDecompositionMap = nullptr;
 	criticalPointMap = nullptr;
 	roadMap.addVertex(Coordinate(basex, basey));
+	robotPos = Coordinate(basex, basey);
 }
 
 void Map::searchMap()
 {
+	// OFFLINE COMPUTATIONS
 	//lineSweep();
 	lineSweep2();
 	createCells();
 	identifyCellsForVertices();
 	linkVerticesInCells();
+	//cellCoverage(8);
+	mapCoverage();
+
+
+	//std::stack<Coordinate> diller = roadMap.getPath(Coordinate(10, 20), Coordinate(60, 30));
+	//std::cout << "Path:" << std::endl;
+	//while (!diller.empty()) {
+	//	std::cout << diller.top().x << " " << diller.top().y << std::endl;
+	//	diller.pop();
+	//}
+	//std::cout << std::endl;
+
 	std::cout << std::endl << "Vertices:" << std::endl;
 	roadMap.printVertices();
 
@@ -292,10 +306,249 @@ void Map::linkVerticesInCells()
 
 				if (roadMap.getVertices()[i].cellKey == roadMap.getVertices()[j].cellKey) {
 					roadMap.addEdge(roadMap.getVertices()[i].coordinate, roadMap.getVertices()[j].coordinate);
-					//roadMap.addEdge(roadMap.getVertices()[j].coordinate, roadMap.getVertices()[i].coordinate);
 				}
 
 			}
+		}
+	}
+}
+
+void Map::drawPath(std::stack<Coordinate> path)
+{
+	Coordinate prev = path.top();
+	path.pop();
+	while (!path.empty()) {
+		drawStraightLine(prev, path.top());
+		//pathTakenMap->setPixel8U(path.top().x, path.top().y, 100);
+
+		std::cout << "DREW PATH FROM " << prev.x << ", " << prev.y << " TO " << path.top().x << ", " << path.top().y << std::endl;
+		prev = path.top();
+		path.pop();
+	}
+}
+
+void Map::drawStraightLine(Coordinate c1, Coordinate c2)
+{
+	int x0 = c1.x;
+	int x1 = c2.x;
+	int y0 = c1.y;
+	int y1 = c2.y;
+
+
+	if (x0 < x1) {
+		int deltaX = x1 - x0;
+		int deltaY = y1 - y0;
+
+		if (y0 > y1)
+			deltaY = y0 - y1;
+
+		if (x0 > x1)
+			deltaX = x0 - x1;
+
+		if (deltaY < deltaX) {
+			int deltaErr = deltaY - deltaX;
+			int y = y0;
+
+			for (int x = x0; x <= x1; x++)
+			{
+				pathTakenMap->setPixel8U(x, y, 150);
+
+				if (deltaErr >= 0) {
+					if (y1 > y0)
+						y = y + 1;
+					else
+						y = y - 1;
+					deltaErr = deltaErr - deltaX;
+				}
+
+				deltaErr = deltaErr + deltaY;
+
+			}
+		}
+
+		else {
+
+			int deltaErr = deltaX - deltaY;
+
+			if (y0 > y1) {
+				int x = x1;
+				for (int y = y1; y <= y0; y++)
+				{
+					pathTakenMap->setPixel8U(x, y, 150);
+
+					if (deltaErr >= 0) {
+						if (x1 > x0)
+							x = x - 1;
+						else
+							x = x + 1;
+						deltaErr = deltaErr - deltaY;
+					}
+
+					deltaErr = deltaErr + deltaX;
+
+				}
+			}
+			else {
+				int x = x0;
+				for (int y = y0; y <= y1; y++)
+				{
+					pathTakenMap->setPixel8U(x, y, 150);
+
+					if (deltaErr >= 0) {
+						if (x1 > x0)
+							x = x + 1;
+						else
+							x = x - 1;
+						deltaErr = deltaErr - deltaY;
+					}
+
+					deltaErr = deltaErr + deltaX;
+
+				}
+			}
+		}
+
+
+	}
+
+	else {
+		int deltaX = x0 - x1;
+		int deltaY = y0 - y1;
+		int y = y1;
+
+		if (y1 > y0)
+			deltaY = y1 - y0;
+
+		int deltaErr = deltaY - deltaX;
+
+		if (deltaY < deltaX) {
+			for (int x = x1; x <= x0; x++)
+			{
+
+				pathTakenMap->setPixel8U(x, y, 150);
+
+				if (deltaErr >= 0) {
+					if (y1 > y0)
+						y = y - 1;
+					else
+						y = y + 1;
+					deltaErr = deltaErr - deltaX;
+				}
+
+				deltaErr = deltaErr + deltaY;
+
+			}
+		}
+
+		else {
+
+			int deltaErr = deltaX - deltaY;
+
+			if (y0 > y1) {
+				int x = x1;
+				for (int y = y1; y <= y0; y++)
+				{
+					pathTakenMap->setPixel8U(x, y, 150);
+
+					if (deltaErr >= 0) {
+						if (x1 > x0)
+							x = x - 1;
+						else
+							x = x + 1;
+						deltaErr = deltaErr - deltaY;
+					}
+
+					deltaErr = deltaErr + deltaX;
+
+				}
+			}
+			else {
+				int x = x0;
+				for (int y = y0; y <= y1; y++)
+				{
+					pathTakenMap->setPixel8U(x, y, 150);
+
+					if (deltaErr >= 0) {
+						if (x1 > x0)
+							x = x + 1;
+						else
+							x = x - 1;
+						deltaErr = deltaErr - deltaY;
+					}
+
+					deltaErr = deltaErr + deltaX;
+
+				}
+			}
+		}
+	}
+}
+
+void Map::mapCoverage()
+{
+	pathTakenMap = obstacleMap->copyFlip(0, 0);
+	for (int i = 0; i < cells.size(); i++) {
+		cellCoverage(i);
+	}
+	pathTakenMap->saveAsPGM("pathTakenMap.pgm"); // Save output
+}
+
+void Map::cellCoverage(int cellId)
+{
+	
+	//drawPath(roadMap.getPath(robotPos, Coordinate(cells[cellId].cellCorners[0].x + 1, cells[cellId].cellCorners[0].y + 1)));
+	
+	int closestToStart = findClosestVertex(robotPos);
+	int closestToGoal = findClosestVertex(Coordinate(cells[cellId].cellCorners[0].x + 1, cells[cellId].cellCorners[0].y + 1));
+	drawStraightLine(robotPos, roadMap.getVertices()[closestToStart].coordinate);
+	drawPath(roadMap.getPath(closestToStart, closestToGoal));
+	drawStraightLine(roadMap.getVertices()[closestToGoal].coordinate, Coordinate(cells[cellId].cellCorners[0].x + 1, cells[cellId].cellCorners[0].y + 1));
+
+	robotPos = Coordinate(cells[cellId].cellCorners[0].x + 1, cells[cellId].cellCorners[0].y + 1);
+
+	bool isNotDone = 1;
+	bool direction = 0; // 0 is down
+
+	while (isNotDone) {
+
+		if (direction) {
+			while (obstacleMap->getPixelValuei(robotPos.x, robotPos.y - 1, 0) != 0) {
+				robotPos.y = robotPos.y - 1;
+				pathTakenMap->setPixel8U(robotPos.x, robotPos.y, 50);
+				// Count distance traveled
+				// Check for targets
+			}
+
+			for (int i = 0; i < 3; i++) {
+				if (obstacleMap->getPixelValuei(robotPos.x + 1, robotPos.y, 0) == 0 || robotPos.x + 1 > cells[cellId].cellCorners[1].x) {
+					if (i != 2)
+						isNotDone = 0;
+					break;
+				}
+				robotPos.x = robotPos.x + 1;
+				pathTakenMap->setPixel8U(robotPos.x, robotPos.y, 50);
+			}
+			direction = 0;
+
+		}
+		else {
+			while (obstacleMap->getPixelValuei(robotPos.x, robotPos.y + 1, 0) != 0) {
+				robotPos.y = robotPos.y + 1;
+				pathTakenMap->setPixel8U(robotPos.x, robotPos.y, 50);
+				// Count distance traveled
+				// Check for targets
+			}
+
+			for (int i = 0; i < 3; i++) {
+				if (obstacleMap->getPixelValuei(robotPos.x + 1, robotPos.y, 0) == 0 || robotPos.x + 1 > cells[cellId].cellCorners[1].x) {
+					if (i != 2)
+						isNotDone = 0;
+					break;
+				}
+				robotPos.x = robotPos.x + 1;
+				pathTakenMap->setPixel8U(robotPos.x, robotPos.y, 50);
+			}
+			direction = 1;
 		}
 	}
 }
@@ -312,6 +565,22 @@ int Map::findCellFromCoordinate(Coordinate coordinate)
 	}
 
 	return unknown;
+}
+
+int Map::findClosestVertex(Coordinate coordinate)
+{
+	double prevClosest = inf;
+	int closestVertex = unknown;
+	int cell = findCellFromCoordinate(coordinate);
+	for (int i = 0; i < roadMap.getVertices().size(); i++) {
+		double dist = sqrt(pow(abs(coordinate.x - roadMap.getVertices()[i].coordinate.x), 2) + pow(abs(coordinate.y - roadMap.getVertices()[i].coordinate.y), 2));
+		//std::cout << dist << " " << prevClosest << std::endl;
+		if (dist < prevClosest && cell == roadMap.getVertices()[i].cellKey) {
+			prevClosest = dist;
+			closestVertex = i;
+		}
+	}
+	return closestVertex;
 }
 
 bool Map::isCriticalPoint(int posX, int posY)

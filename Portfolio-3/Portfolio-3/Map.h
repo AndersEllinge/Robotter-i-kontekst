@@ -34,6 +34,7 @@ private:
 	Image* pathTakenMap;
 	Image* cellDecompositionMap;
 	Image* criticalPointMap;
+	Coordinate robotPos;
 	std::vector<Cell> cells;
 	Graph roadMap;
 
@@ -48,7 +49,15 @@ private:
 	void identifyCellsForVertices();
 	void linkVerticesInCells();
 
+	void drawPath(std::stack<Coordinate> path);
+	void drawStraightLine(Coordinate c1, Coordinate c2);
+
+	void mapCoverage();
+	void cellCoverage(int cellId);
+
 	int findCellFromCoordinate(Coordinate coordinate);
+
+	int findClosestVertex(Coordinate coordinate);
 
 	bool isCriticalPoint(int x, int y);
 

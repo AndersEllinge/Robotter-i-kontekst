@@ -53,24 +53,26 @@ void Graph::updateCellKey(int index, int iCellKey)
 	vertices[index].cellKey = iCellKey;
 }
 
-std::stack<Coordinate> Graph::getPath(Coordinate start, Coordinate goal)
+std::stack<Coordinate> Graph::getPath(int start, int goal)
 {
 
 	// 1) Create dijkstra table
 	// Init for dijkstra
 	std::vector<std::vector<int>> dijkstraGraph;
 	dijkstraGraph.resize(vertices.size());
-	int vertexUnderInspection = findIndexForVertex(start);
+	//int closestToStart = findClosestVertex(start);
+	//int closestToGoal = findClosestVertex(goal);
+	int vertexUnderInspection; // = findIndexForVertex(start);
 	int numberOfUnknownsRemaining = dijkstraGraph.size();
 
 	for (int i = 0; i < dijkstraGraph.size(); i++) {
 		dijkstraGraph[i].resize(3);
 		dijkstraGraph[i][0] = 0; // Known parameter of the Dijkstra graph
 		dijkstraGraph[i][1] = inf; // Distance parameter of the Dijkstra graph
-		dijkstraGraph[i][2] = vertexUnderInspection; // Previous parameter of the Dijkstra graph
+		dijkstraGraph[i][2] = start; // Previous parameter of the Dijkstra graph
 	}
 
-	dijkstraGraph[vertexUnderInspection][1] = 0; // Set distance of starting vertex to 0
+	dijkstraGraph[start][1] = 0; // Set distance of starting vertex to 0
 
 	// Create table
 	while (numberOfUnknownsRemaining) {
@@ -78,7 +80,7 @@ std::stack<Coordinate> Graph::getPath(Coordinate start, Coordinate goal)
 		// Find unknown vertex with shortest distance
 		int prevDistance = inf;
 		for (int i = 0; i < dijkstraGraph.size(); i++) {
-			if (dijkstraGraph[i][1] < prevDistance) {
+			if (dijkstraGraph[i][1] < prevDistance && dijkstraGraph[i][0] == 0) {
 				vertexUnderInspection = i;
 				prevDistance = dijkstraGraph[i][1];
 			}
@@ -89,26 +91,30 @@ std::stack<Coordinate> Graph::getPath(Coordinate start, Coordinate goal)
 
 		// Update according to adjecent vertices
 		for (int i = 0; i < vertices[vertexUnderInspection].adjecencyList.size(); i++) {
-			if (dijkstraGraph[vertexUnderInspection][1] + vertices[vertexUnderInspection].adjecencyList[i].cost < dijkstraGraph[vertexUnderInspection][1]) { // Is the distance to this vertex smaller? 
-				dijkstraGraph[vertexUnderInspection][1] = dijkstraGraph[vertexUnderInspection][1] + vertices[vertexUnderInspection].adjecencyList[i].cost; // Update distance
-				dijkstraGraph[vertexUnderInspection][0] = vertexUnderInspection; // Update pointer
+			int newCost = dijkstraGraph[vertexUnderInspection][1] + vertices[vertexUnderInspection].adjecencyList[i].cost;
+			if (newCost < dijkstraGraph[vertices[vertexUnderInspection].adjecencyList[i].pointer][1]) { // Is the distance to this vertex smaller? 
+				dijkstraGraph[vertices[vertexUnderInspection].adjecencyList[i].pointer][1] = newCost; // Update distance
+				dijkstraGraph[vertices[vertexUnderInspection].adjecencyList[i].pointer][2] = vertexUnderInspection; // Update pointer
 			}
 		}
 	}
 
 
+	
 	// 2) Find path from dijkstra table
 	std::stack<Coordinate> path;
-	int vertexForPath = findIndexForVertex(goal);
+	int vertexForPath = goal;
 
-	path.push(goal); // Push goal coordinate onto path
+	//path.push(goal); // Push goal coordinate onto path
 
 	while (dijkstraGraph[vertexForPath][1] != 0) {
 		path.push(vertices[vertexForPath].coordinate); // Push vertex coordinate onto path
+		std::cout << "FJKNSAIJOFDSJONFOSDFSFASUJHFSJ" << std::endl;
 		vertexForPath = dijkstraGraph[vertexForPath][2]; // Set vertex to next vertex in path
 	}
 
 	path.push(vertices[vertexForPath].coordinate); // Push starting vertex coordinate
+	//path.push(start);
 
 	return path;
 }
@@ -142,5 +148,15 @@ int Graph::findIndexForVertex(Coordinate coordinate)
 
 int Graph::findClosestVertex(Coordinate coordinate)
 {
-	for (int i = 0; i < vertices.size(); i++)
+	double prevClosest = inf;
+	int closestVertex = unknown;
+	for (int i = 0; i < vertices.size(); i++) {
+		double dist = sqrt(pow(abs(coordinate.x - vertices[i].coordinate.x), 2) + pow(abs(coordinate.y - vertices[i].coordinate.y), 2));
+		//std::cout << dist << " " << prevClosest << std::endl;
+		if (dist < prevClosest) {
+			prevClosest = dist;
+			closestVertex = i;
+		}
+	}
+	return closestVertex;
 }
