@@ -45,6 +45,10 @@ private:
 	void findCells();
 	bool isMoreCells();
 	void lineSweep2();
+	void identifyCellsForVertices();
+	void linkVerticesInCells();
+
+	int findCellFromCoordinate(Coordinate coordinate);
 
 	bool isCriticalPoint(int x, int y);
 

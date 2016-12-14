@@ -17,6 +17,15 @@ void Map::searchMap()
 	//lineSweep();
 	lineSweep2();
 	createCells();
+	identifyCellsForVertices();
+	linkVerticesInCells();
+	std::cout << std::endl << "Vertices:" << std::endl;
+	roadMap.printVertices();
+
+	std::cout << std::endl;
+
+	std::cout << "Edges:" << std::endl;
+	roadMap.printEdges();
 }
 
 void Map::drawPathTaken()
@@ -218,14 +227,17 @@ void Map::lineSweep2()
 					yIterator--;
 					criticalPointMap->setPixel8U(x, yIterator, 123); // 123 is color identifier for sweep line
 					lineCounter++;
-					std::cout << lineCounter << std::endl;
+					//std::cout << lineCounter << std::endl;
 				}
 
 				// Add entry vertices and edge
 				if (lineCounter) {
 					criticalPointMap->setPixel8U(x - 1, y - lineCounter / 2, 195); // draw left entry point of the linesweep
 					criticalPointMap->setPixel8U(x + 1, y - lineCounter / 2, 195); // draw right entry point of the linesweep
-					// NOT DONE!
+					roadMap.addVertex(Coordinate(x - 1, y - lineCounter / 2));
+					roadMap.addVertex(Coordinate(x + 1, y - lineCounter / 2));
+					roadMap.addEdge(Coordinate(x - 1, y - lineCounter / 2), Coordinate(x + 1, y - lineCounter / 2), 2);
+					roadMap.addEdge(Coordinate(x + 1, y - lineCounter / 2), Coordinate(x - 1, y - lineCounter / 2), 2);
 				}
 				
 
@@ -236,14 +248,17 @@ void Map::lineSweep2()
 					yIterator++;
 					criticalPointMap->setPixel8U(x, yIterator, 123); // 123 is color identifier for sweep line
 					lineCounter++;
-					std::cout << lineCounter << std::endl;
+					//std::cout << lineCounter << std::endl;
 				}
 
 				// Add entry vertices and edge
 				if (lineCounter) {
 					criticalPointMap->setPixel8U(x - 1, y + lineCounter / 2, 195); // draw left entry point of the linesweep
 					criticalPointMap->setPixel8U(x + 1, y + lineCounter / 2, 195); // draw right entry point of the linesweep
-					// NOT DONE!
+					roadMap.addVertex(Coordinate(x - 1, y + lineCounter / 2));
+					roadMap.addVertex(Coordinate(x + 1, y + lineCounter / 2));
+					roadMap.addEdge(Coordinate(x - 1, y + lineCounter / 2), Coordinate(x + 1, y + lineCounter / 2), 2);
+					roadMap.addEdge(Coordinate(x + 1, y + lineCounter / 2), Coordinate(x - 1, y + lineCounter / 2), 2);
 				}
 
 
@@ -255,6 +270,48 @@ void Map::lineSweep2()
 
 
 	criticalPointMap->saveAsPGM("criticalPointMap.pgm"); // Save output
+}
+
+void Map::identifyCellsForVertices()
+{
+
+	// Go  trough all vertices
+	// Compare to cells to find corresponding cell
+	// Update vertex cell key
+
+	for (int i = 0; i < roadMap.getVertices().size(); i++) {
+		roadMap.updateCellKey(i, findCellFromCoordinate(roadMap.getVertices()[i].coordinate));
+	}
+}
+
+void Map::linkVerticesInCells()
+{
+	for (int i = 0; i < roadMap.getVertices().size(); i++) {
+		for (int j = 0; j < roadMap.getVertices().size(); j++) {
+			if (i != j) {
+
+				if (roadMap.getVertices()[i].cellKey == roadMap.getVertices()[j].cellKey) {
+					roadMap.addEdge(roadMap.getVertices()[i].coordinate, roadMap.getVertices()[j].coordinate);
+					//roadMap.addEdge(roadMap.getVertices()[j].coordinate, roadMap.getVertices()[i].coordinate);
+				}
+
+			}
+		}
+	}
+}
+
+int Map::findCellFromCoordinate(Coordinate coordinate)
+{
+
+	for (int i = 0; i < cells.size(); i++) {
+		if (coordinate.x >= cells[i].cellCorners[0].x) // larger x than top left corner of cell
+			if (coordinate.y >= cells[i].cellCorners[0].y) // larger y than top left corner of cell
+				if (coordinate.x <= cells[i].cellCorners[1].x) // less x than bottom right corner of cell
+					if (coordinate.y <= cells[i].cellCorners[1].y) // less y than bottom left cornor of cell
+						return i;
+	}
+
+	return unknown;
 }
 
 bool Map::isCriticalPoint(int posX, int posY)

@@ -36,6 +36,23 @@ void Graph::addEdge(Coordinate fromVertex, Coordinate toVertex, int cost)
 	vertices[findIndexForVertex(fromVertex)].adjecencyList.push_back(Edge(findIndexForVertex(toVertex), cost));
 }
 
+void Graph::addEdge(Coordinate fromVertex, Coordinate toVertex)
+{
+	int cost = sqrt(pow(abs(fromVertex.x - toVertex.x), 2) + pow(abs(fromVertex.y - toVertex.y), 2));
+
+	vertices[findIndexForVertex(fromVertex)].adjecencyList.push_back(Edge(findIndexForVertex(toVertex), cost));
+}
+
+std::vector<Vertex> Graph::getVertices()
+{
+	return vertices;
+}
+
+void Graph::updateCellKey(int index, int iCellKey)
+{
+	vertices[index].cellKey = iCellKey;
+}
+
 std::stack<Coordinate> Graph::getPath(Coordinate start, Coordinate goal)
 {
 
@@ -96,6 +113,23 @@ std::stack<Coordinate> Graph::getPath(Coordinate start, Coordinate goal)
 	return path;
 }
 
+void Graph::printVertices()
+{
+	for (int i = 0; i < vertices.size(); i++) {
+		std::cout << i << " " << vertices[i].coordinate.x << " " << vertices[i].coordinate.y << " " << vertices[i].cellKey << std::endl;
+	}
+}
+
+void Graph::printEdges()
+{
+	for (int i = 0; i < vertices.size(); i++) {
+		for (int j = 0; j < vertices[i].adjecencyList.size(); j++) {
+			std::cout << i << " " << vertices[i].adjecencyList[j].pointer << " " << vertices[i].adjecencyList[j].cost << "; ";
+		}
+		std::cout << std::endl;
+	}
+}
+
 int Graph::findIndexForVertex(Coordinate coordinate)
 {
 	for (int i = 0; i < vertices.size(); i++) {
@@ -104,4 +138,9 @@ int Graph::findIndexForVertex(Coordinate coordinate)
 	}
 	std::cout << "Could not find vertex" << std::endl;
 	return inf;
+}
+
+int Graph::findClosestVertex(Coordinate coordinate)
+{
+	for (int i = 0; i < vertices.size(); i++)
 }

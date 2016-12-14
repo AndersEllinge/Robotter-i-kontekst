@@ -2,6 +2,7 @@
 #include <iostream>
 #include <vector>
 #include <stack>
+#include <cmath>
 #define unknown 999999
 #define inf 9999999
 
@@ -77,12 +78,22 @@ public:
 	void addVertex(Coordinate coordinate, int cellKey);
 	void addVertex(Coordinate coordinate, int cellKey, std::vector<Edge> adjecencyList);
 	void addEdge(Coordinate fromVertex, Coordinate toVertex, int cost);
+	void addEdge(Coordinate fromVertex, Coordinate toVertex);
+
+	std::vector<Vertex> getVertices();
+
+	void updateCellKey(int index, int iCellKey);
+
 	std::stack<Coordinate> getPath(Coordinate start, Coordinate goal);
+
+	void printVertices();
+	void printEdges();
 
 private:
 	std::vector<Vertex> vertices;
 
 	int findIndexForVertex(Coordinate coordinate);
+	int findClosestVertex(Coordinate coordinate);
 
 };
 
