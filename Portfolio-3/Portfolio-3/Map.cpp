@@ -11,35 +11,37 @@ Map::Map(Image* inputMapObstacle, Image* inputMapItems, int basex, int basey)
 	criticalPointMap = nullptr;
 	roadMap.addVertex(Coordinate(basex, basey));
 	robotPos = Coordinate(basex, basey);
+	distanceTraveled = 0;
 }
 
 void Map::searchMap()
 {
+	pathTakenMap = obstacleMap->copyFlip(0, 0);
+
 	// OFFLINE COMPUTATIONS
 	//lineSweep();
 	lineSweep2();
 	createCells();
 	identifyCellsForVertices();
 	linkVerticesInCells();
-	//cellCoverage(8);
+
+	// ONLINE COMPUTATIONS
 	mapCoverage();
+	collectTargets();
+	std::cout << "Distance traveled: " << distanceTraveled << " pixels" << std::endl;
 
 
-	//std::stack<Coordinate> diller = roadMap.getPath(Coordinate(10, 20), Coordinate(60, 30));
-	//std::cout << "Path:" << std::endl;
-	//while (!diller.empty()) {
-	//	std::cout << diller.top().x << " " << diller.top().y << std::endl;
-	//	diller.pop();
-	//}
+
+	//std::cout << std::endl << "Vertices:" << std::endl;
+	//roadMap.printVertices();
+
 	//std::cout << std::endl;
 
-	std::cout << std::endl << "Vertices:" << std::endl;
-	roadMap.printVertices();
+	//std::cout << "Edges:" << std::endl;
+	//roadMap.printEdges();
 
-	std::cout << std::endl;
-
-	std::cout << "Edges:" << std::endl;
-	roadMap.printEdges();
+	pathTakenMap->saveAsPGM("pathTakenMap.pgm"); // Save output
+	itemMap->saveAsPGM("itemMap.pgm"); // Save output
 }
 
 void Map::drawPathTaken()
@@ -172,8 +174,8 @@ void Map::drawLineSweep(int posX, int posY, int scenario)
 
 void Map::drawCell(Coordinate topLeft, Coordinate bottomRight, int color)
 {
-	std::cout << "topleft " << topLeft.x << " " << topLeft.y <<std::endl;
-	std::cout << "bottomright " << bottomRight.x << " " << bottomRight.y << std::endl;
+	//std::cout << "topleft " << topLeft.x << " " << topLeft.y <<std::endl;
+	//std::cout << "bottomright " << bottomRight.x << " " << bottomRight.y << std::endl;
 
 	for (size_t i = topLeft.x; i <= bottomRight.x ; i++)
 	{
@@ -319,9 +321,10 @@ void Map::drawPath(std::stack<Coordinate> path)
 	path.pop();
 	while (!path.empty()) {
 		drawStraightLine(prev, path.top());
+		distanceTraveled = distanceTraveled + sqrt(pow(abs(prev.x - path.top().x), 2) + pow(abs(prev.y - path.top().y), 2));
 		//pathTakenMap->setPixel8U(path.top().x, path.top().y, 100);
 
-		std::cout << "DREW PATH FROM " << prev.x << ", " << prev.y << " TO " << path.top().x << ", " << path.top().y << std::endl;
+		//std::cout << "DREW PATH FROM " << prev.x << ", " << prev.y << " TO " << path.top().x << ", " << path.top().y << std::endl;
 		prev = path.top();
 		path.pop();
 	}
@@ -486,11 +489,9 @@ void Map::drawStraightLine(Coordinate c1, Coordinate c2)
 
 void Map::mapCoverage()
 {
-	pathTakenMap = obstacleMap->copyFlip(0, 0);
 	for (int i = 0; i < cells.size(); i++) {
 		cellCoverage(i);
 	}
-	pathTakenMap->saveAsPGM("pathTakenMap.pgm"); // Save output
 }
 
 void Map::cellCoverage(int cellId)
@@ -501,9 +502,10 @@ void Map::cellCoverage(int cellId)
 	int closestToStart = findClosestVertex(robotPos);
 	int closestToGoal = findClosestVertex(Coordinate(cells[cellId].cellCorners[0].x + 1, cells[cellId].cellCorners[0].y + 1));
 	drawStraightLine(robotPos, roadMap.getVertices()[closestToStart].coordinate);
+	distanceTraveled = distanceTraveled + sqrt(pow(abs(robotPos.x - roadMap.getVertices()[closestToStart].coordinate.x), 2) + pow(abs(robotPos.y - roadMap.getVertices()[closestToStart].coordinate.y), 2));
 	drawPath(roadMap.getPath(closestToStart, closestToGoal));
 	drawStraightLine(roadMap.getVertices()[closestToGoal].coordinate, Coordinate(cells[cellId].cellCorners[0].x + 1, cells[cellId].cellCorners[0].y + 1));
-
+	distanceTraveled = distanceTraveled + sqrt(pow(abs(roadMap.getVertices()[closestToGoal].coordinate.x - cells[cellId].cellCorners[0].x + 1), 2) + pow(abs(roadMap.getVertices()[closestToGoal].coordinate.y - cells[cellId].cellCorners[0].y + 1), 2));
 	robotPos = Coordinate(cells[cellId].cellCorners[0].x + 1, cells[cellId].cellCorners[0].y + 1);
 
 	bool isNotDone = 1;
@@ -513,10 +515,11 @@ void Map::cellCoverage(int cellId)
 
 		if (direction) {
 			while (obstacleMap->getPixelValuei(robotPos.x, robotPos.y - 1, 0) != 0) {
+				scanForTarget(robotPos);
 				robotPos.y = robotPos.y - 1;
 				pathTakenMap->setPixel8U(robotPos.x, robotPos.y, 50);
-				// Count distance traveled
-				// Check for targets
+				distanceTraveled++;
+				
 			}
 
 			for (int i = 0; i < 3; i++) {
@@ -526,6 +529,7 @@ void Map::cellCoverage(int cellId)
 					break;
 				}
 				robotPos.x = robotPos.x + 1;
+				distanceTraveled++;
 				pathTakenMap->setPixel8U(robotPos.x, robotPos.y, 50);
 			}
 			direction = 0;
@@ -533,10 +537,11 @@ void Map::cellCoverage(int cellId)
 		}
 		else {
 			while (obstacleMap->getPixelValuei(robotPos.x, robotPos.y + 1, 0) != 0) {
+				scanForTarget(robotPos);
 				robotPos.y = robotPos.y + 1;
 				pathTakenMap->setPixel8U(robotPos.x, robotPos.y, 50);
-				// Count distance traveled
-				// Check for targets
+				distanceTraveled++;
+				
 			}
 
 			for (int i = 0; i < 3; i++) {
@@ -546,6 +551,7 @@ void Map::cellCoverage(int cellId)
 					break;
 				}
 				robotPos.x = robotPos.x + 1;
+				distanceTraveled++;
 				pathTakenMap->setPixel8U(robotPos.x, robotPos.y, 50);
 			}
 			direction = 1;
@@ -581,6 +587,85 @@ int Map::findClosestVertex(Coordinate coordinate)
 		}
 	}
 	return closestVertex;
+}
+
+void Map::scanForTarget(Coordinate position)
+{
+	if (itemMap->getPixelValuei(robotPos.x, robotPos.y, 0) == 0) { // Check this
+		targets.push_back(Coordinate(robotPos.x, robotPos.y));
+		itemMap->setPixel8U(robotPos.x, robotPos.y, 150);
+	}
+
+	if (itemMap->getPixelValuei(robotPos.x, robotPos.y - 1, 0) == 0) { // Check top
+		targets.push_back(Coordinate(robotPos.x, robotPos.y - 1));
+		itemMap->setPixel8U(robotPos.x, robotPos.y - 1, 150);
+	}
+
+	if (itemMap->getPixelValuei(robotPos.x, robotPos.y + 1, 0) == 0) { // Check bottom
+		targets.push_back(Coordinate(robotPos.x, robotPos.y + 1));
+		itemMap->setPixel8U(robotPos.x, robotPos.y + 1, 150);
+	}
+
+	if (itemMap->getPixelValuei(robotPos.x + 1, robotPos.y, 0) == 0) { // Check right
+		targets.push_back(Coordinate(robotPos.x + 1, robotPos.y));
+		itemMap->setPixel8U(robotPos.x + 1, robotPos.y, 150);
+	}
+
+	if (itemMap->getPixelValuei(robotPos.x - 1, robotPos.y, 0) == 0) { // Check left
+		targets.push_back(Coordinate(robotPos.x - 1, robotPos.y));
+		itemMap->setPixel8U(robotPos.x - 1, robotPos.y, 150);
+	}
+
+	if (itemMap->getPixelValuei(robotPos.x + 1, robotPos.y - 1, 0) == 0) { // Check top right
+		targets.push_back(Coordinate(robotPos.x + 1, robotPos.y - 1));
+		itemMap->setPixel8U(robotPos.x + 1, robotPos.y - 1, 150);
+	}
+
+	if (itemMap->getPixelValuei(robotPos.x - 1, robotPos.y - 1, 0) == 0) { // Check top left
+		targets.push_back(Coordinate(robotPos.x - 1, robotPos.y - 1));
+		itemMap->setPixel8U(robotPos.x - 1, robotPos.y - 1, 150);
+	}
+
+	if (itemMap->getPixelValuei(robotPos.x + 1, robotPos.y + 1, 0) == 0) { // Check bottom right
+		targets.push_back(Coordinate(robotPos.x + 1, robotPos.y + 1));
+		itemMap->setPixel8U(robotPos.x + 1, robotPos.y + 1, 150);
+	}
+
+	if (itemMap->getPixelValuei(robotPos.x - 1, robotPos.y + 1, 0) == 0) { // Check bottom left
+		targets.push_back(Coordinate(robotPos.x - 1, robotPos.y + 1));
+		itemMap->setPixel8U(robotPos.x - 1, robotPos.y + 1, 150);
+	}
+}
+
+void Map::collectTargets()
+{
+	int closestToStart;
+	int closestToGoal;
+	for (int i = 0; i < targets.size(); i++) {
+		
+		// Go to target
+		closestToStart = findClosestVertex(robotPos);
+		closestToGoal = findClosestVertex(targets[i]);
+		drawStraightLine(robotPos, roadMap.getVertices()[closestToStart].coordinate);
+		distanceTraveled = distanceTraveled + sqrt(pow(abs(robotPos.x - roadMap.getVertices()[closestToStart].coordinate.x), 2) + pow(abs(robotPos.y - roadMap.getVertices()[closestToStart].coordinate.y), 2));
+		drawPath(roadMap.getPath(closestToStart, closestToGoal));
+		drawStraightLine(roadMap.getVertices()[closestToGoal].coordinate, targets[i]);
+		distanceTraveled = distanceTraveled + sqrt(pow(abs(roadMap.getVertices()[closestToGoal].coordinate.x - targets[i].x), 2) + pow(abs(roadMap.getVertices()[closestToGoal].coordinate.y - targets[i].y), 2));
+
+
+		robotPos = targets[i];
+
+
+		// Return to base
+		closestToStart = findClosestVertex(robotPos);
+		drawStraightLine(robotPos, roadMap.getVertices()[closestToStart].coordinate);
+		distanceTraveled = distanceTraveled + sqrt(pow(abs(robotPos.x - roadMap.getVertices()[closestToStart].coordinate.x), 2) + pow(abs(robotPos.y - roadMap.getVertices()[closestToStart].coordinate.y), 2));
+		drawPath(roadMap.getPath(closestToStart, 0));
+		robotPos = roadMap.getVertices()[0].coordinate;
+
+	}
+
+
 }
 
 bool Map::isCriticalPoint(int posX, int posY)

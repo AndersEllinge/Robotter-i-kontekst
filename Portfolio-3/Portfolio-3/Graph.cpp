@@ -109,7 +109,6 @@ std::stack<Coordinate> Graph::getPath(int start, int goal)
 
 	while (dijkstraGraph[vertexForPath][1] != 0) {
 		path.push(vertices[vertexForPath].coordinate); // Push vertex coordinate onto path
-		std::cout << "FJKNSAIJOFDSJONFOSDFSFASUJHFSJ" << std::endl;
 		vertexForPath = dijkstraGraph[vertexForPath][2]; // Set vertex to next vertex in path
 	}
 

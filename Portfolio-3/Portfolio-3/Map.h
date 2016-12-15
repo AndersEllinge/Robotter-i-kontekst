@@ -36,7 +36,9 @@ private:
 	Image* criticalPointMap;
 	Coordinate robotPos;
 	std::vector<Cell> cells;
+	std::vector<Coordinate> targets;
 	Graph roadMap;
+	int distanceTraveled;
 
 	void createCells();
 	void lineSweep();
@@ -58,6 +60,9 @@ private:
 	int findCellFromCoordinate(Coordinate coordinate);
 
 	int findClosestVertex(Coordinate coordinate);
+
+	void scanForTarget(Coordinate position);
+	void collectTargets();
 
 	bool isCriticalPoint(int x, int y);
 
